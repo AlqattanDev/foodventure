@@ -1,80 +1,101 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { DISHES } from "../data/dishes";
+import { useGame } from "../state/game";
+import { Button, Coin, Stars } from "./kit";
+import { C, FONT } from "./theme";
+
 /**
- * Placeholder HUD so the diorama already reads as a game.
- * Real cooking UI (prep / stir / star flourish) comes in milestone 2-3.
+ * Persistent HUD. A slim top bar (coins + current dish) shows on the calm
+ * screens; the big "Start Cooking" call-to-action only appears at the stall.
+ * Prep / Cook / Rating / Sell each own the full screen, so the HUD steps back.
  */
 export function Hud() {
-  return (
-    <div style={styles.wrap}>
-      {/* top bar */}
-      <div style={styles.topbar}>
-        <div style={styles.coins}>🪙 120</div>
-        <div style={styles.title}>Halwa Bahrainiya</div>
-        <div style={styles.stars}>★★★☆☆</div>
-      </div>
+  const phase = useGame((s) => s.phase);
+  const coins = useGame((s) => s.coins);
+  const selected = useGame((s) => s.selected);
+  const bestStars = useGame((s) => s.bestStars[selected]);
+  const openSelect = useGame((s) => s.openSelect);
+  const dish = DISHES[selected];
 
-      {/* bottom cook button */}
-      <div style={styles.bottom}>
-        <button style={styles.cookBtn}>Start Cooking</button>
-      </div>
+  const showTop = phase === "idle" || phase === "select" || phase === "shop";
+  const showStart = phase === "idle";
+
+  return (
+    <div style={S.wrap}>
+      <AnimatePresence>
+        {showTop && (
+          <motion.div
+            key="top"
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -30, opacity: 0 }}
+            style={S.topbar}
+          >
+            <div style={S.coins}><Coin value={coins} /></div>
+            <div style={S.center}>
+              <div style={S.dish}>{dish.name}</div>
+              <Stars value={bestStars} size={13} />
+            </div>
+            <div style={{ width: 74 }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showStart && (
+          <motion.div
+            key="start"
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 40, opacity: 0 }}
+            style={S.bottom}
+          >
+            <Button variant="primary" onClick={openSelect} style={{ padding: "17px 46px", fontSize: 20 }}>
+              Start Cooking
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
+const S: Record<string, React.CSSProperties> = {
   wrap: {
     position: "fixed",
     inset: 0,
     pointerEvents: "none",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    fontFamily:
-      "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
-    padding: "calc(env(safe-area-inset-top) + 14px) 16px 32px",
-    color: "#fff3e2",
+    fontFamily: FONT,
+    color: C.cream,
   },
   topbar: {
+    position: "absolute",
+    top: "calc(env(safe-area-inset-top) + 14px)",
+    left: 16,
+    right: 16,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
   },
   coins: {
     background: "rgba(40,20,10,0.55)",
     backdropFilter: "blur(8px)",
     padding: "8px 14px",
     borderRadius: 999,
-    fontWeight: 700,
+    fontWeight: 800,
     fontSize: 16,
-    border: "1px solid rgba(255,200,140,0.25)",
+    border: `1px solid ${C.glassBorder}`,
+    minWidth: 74,
+    textAlign: "center",
   },
-  title: {
-    fontSize: 15,
-    fontWeight: 600,
-    letterSpacing: 0.3,
-    textShadow: "0 2px 8px rgba(0,0,0,0.6)",
-    opacity: 0.95,
-  },
-  stars: {
-    fontSize: 18,
-    color: "#ffc24d",
-    textShadow: "0 0 12px rgba(255,180,60,0.6)",
-  },
+  center: { display: "flex", flexDirection: "column", alignItems: "center", gap: 4 },
+  dish: { fontSize: 15, fontWeight: 700, textShadow: "0 2px 8px rgba(0,0,0,0.6)" },
   bottom: {
+    position: "absolute",
+    bottom: "calc(env(safe-area-inset-bottom) + 34px)",
+    left: 0,
+    right: 0,
     display: "flex",
     justifyContent: "center",
-  },
-  cookBtn: {
-    pointerEvents: "auto",
-    background: "linear-gradient(180deg,#ffb14d,#f0822d)",
-    color: "#3a1c08",
-    border: "none",
-    padding: "16px 40px",
-    borderRadius: 999,
-    fontSize: 19,
-    fontWeight: 800,
-    letterSpacing: 0.4,
-    boxShadow: "0 10px 26px rgba(255,140,40,0.45), 0 2px 0 #c9691f inset",
-    cursor: "pointer",
   },
 };

@@ -7,7 +7,9 @@ import {
   Float,
 } from "@react-three/drei";
 import * as THREE from "three";
-import { Steam } from "./Steam";
+import { Halwa } from "./Halwa";
+import { Chef } from "./Chef";
+import { useGame } from "../state/game";
 
 /**
  * V1 milestone 1: a cozy Khaliji street-food stall as a handheld diorama.
@@ -16,13 +18,19 @@ import { Steam } from "./Steam";
  */
 export function Diorama() {
   const rig = useRef<THREE.Group>(null);
+  const phase = useGame((s) => s.phase);
 
-  // subtle idle camera drift so the little world feels alive
-  useFrame((state) => {
+  // subtle idle world-drift so it feels alive — but freeze during the
+  // mini-games so the DOM overlays stay locked over the plate / pot.
+  useFrame((state, dt) => {
     if (!rig.current) return;
     const t = state.clock.elapsedTime;
-    rig.current.rotation.y = Math.sin(t * 0.18) * 0.08;
-    rig.current.position.y = Math.sin(t * 0.5) * 0.03;
+    const relaxed = phase === "idle" || phase === "select" || phase === "shop";
+    const targetRotY = relaxed ? Math.sin(t * 0.18) * 0.08 : 0;
+    const targetPosY = relaxed ? Math.sin(t * 0.5) * 0.03 : 0;
+    const k = 1 - Math.pow(0.02, dt);
+    rig.current.rotation.y = THREE.MathUtils.lerp(rig.current.rotation.y, targetRotY, k);
+    rig.current.position.y = THREE.MathUtils.lerp(rig.current.position.y, targetPosY, k);
   });
 
   return (
@@ -50,18 +58,27 @@ export function Diorama() {
       {/* ---------- HANGING WARM LIGHTS (bloom bait) ---------- */}
       {[-2.1, 0, 2.1].map((x, i) => (
         <group key={i} position={[x, 3.1, -1.3]}>
+          {/* little cord + shade so it reads as a hanging lamp */}
+          <mesh position={[0, 0.34, 0]}>
+            <cylinderGeometry args={[0.012, 0.012, 0.7, 6]} />
+            <meshStandardMaterial color="#3a2418" roughness={0.9} />
+          </mesh>
+          <mesh position={[0, 0.12, 0]} castShadow>
+            <coneGeometry args={[0.22, 0.24, 16, 1, true]} />
+            <meshStandardMaterial color="#8a4a26" roughness={0.6} metalness={0.3} side={2} />
+          </mesh>
           <mesh>
-            <sphereGeometry args={[0.16, 16, 16]} />
+            <sphereGeometry args={[0.12, 16, 16]} />
             <meshStandardMaterial
-              color="#ffb64d"
+              color="#ffcf87"
               emissive="#ffae3a"
-              emissiveIntensity={4}
+              emissiveIntensity={2.4}
               toneMapped={false}
             />
           </mesh>
           <pointLight
             position={[0, -0.2, 0]}
-            intensity={6}
+            intensity={4}
             distance={5}
             color="#ffb765"
           />
@@ -129,53 +146,8 @@ export function Diorama() {
         <meshStandardMaterial color="#5e2f18" roughness={0.5} />
       </RoundedBox>
 
-      {/* ---------- STOVE (hero, centered) ---------- */}
-      <group position={[-0.35, 0.74, 0.55]}>
-        <RoundedBox args={[1.5, 0.28, 1.3]} radius={0.06} smoothness={4} castShadow>
-          <meshStandardMaterial color="#2f2320" roughness={0.4} metalness={0.6} />
-        </RoundedBox>
-        {/* flame glow */}
-        <pointLight position={[0, 0.25, 0]} intensity={2.2} distance={2} color="#ff7a2a" />
-        <mesh position={[0, 0.16, 0]}>
-          <cylinderGeometry args={[0.42, 0.42, 0.05, 20]} />
-          <meshStandardMaterial
-            color="#ff8a3a"
-            emissive="#ff6a1a"
-            emissiveIntensity={2.2}
-            toneMapped={false}
-          />
-        </mesh>
-
-        {/* ---------- HERO: COPPER POT + GLOSSY HALWA ---------- */}
-        <group position={[0, 0.42, 0]}>
-          {/* pot body */}
-          <mesh castShadow>
-            <cylinderGeometry args={[0.5, 0.42, 0.5, 32]} />
-            <meshStandardMaterial
-              color="#c9743a"
-              metalness={0.95}
-              roughness={0.28}
-            />
-          </mesh>
-          {/* pot rim */}
-          <mesh position={[0, 0.26, 0]} castShadow>
-            <torusGeometry args={[0.5, 0.05, 12, 32]} />
-            <meshStandardMaterial color="#e0a05a" metalness={1} roughness={0.2} />
-          </mesh>
-          {/* the halwa — gooey, glossy, glowing warm */}
-          <mesh position={[0, 0.2, 0]}>
-            <cylinderGeometry args={[0.46, 0.46, 0.14, 32]} />
-            <meshStandardMaterial
-              color="#c1421f"
-              emissive="#5a1400"
-              emissiveIntensity={0.5}
-              roughness={0.12}
-              metalness={0.1}
-            />
-          </mesh>
-          <Steam position={[0, 0.4, 0]} />
-        </group>
-      </group>
+      {/* ---------- STOVE + HERO COPPER POT + LIVE HALWA ---------- */}
+      <Halwa />
 
       {/* ---------- PREP PLATE ---------- */}
       <group position={[1.75, 0.75, 0.9]}>
@@ -214,22 +186,8 @@ export function Diorama() {
         ))}
       </group>
 
-      {/* ---------- CHEF (placeholder, behind counter) ---------- */}
-      <group position={[1.15, 0.35, -0.55]} scale={0.82}>
-        <mesh position={[0, 0.55, 0]} castShadow>
-          <capsuleGeometry args={[0.32, 0.66, 8, 16]} />
-          <meshStandardMaterial color="#d94f2a" roughness={0.85} />
-        </mesh>
-        <mesh position={[0, 1.12, 0]} castShadow>
-          <sphereGeometry args={[0.27, 24, 24]} />
-          <meshStandardMaterial color="#b87a52" roughness={0.75} />
-        </mesh>
-        {/* chef hat */}
-        <mesh position={[0, 1.42, 0]} castShadow>
-          <cylinderGeometry args={[0.23, 0.21, 0.28, 20]} />
-          <meshStandardMaterial color="#f2ede2" roughness={0.9} />
-        </mesh>
-      </group>
+      {/* ---------- CHEF (reacts to cooking + a 5-star cheer) ---------- */}
+      <Chef />
 
       {/* soft grounding shadow */}
       <ContactShadows

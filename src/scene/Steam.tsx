@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { cookViz } from "../game/cookViz";
 
 /** Cheap curling steam puffs rising off the pot. */
 export function Steam({ position = [0, 0, 0] as [number, number, number] }) {
@@ -25,11 +26,12 @@ export function Steam({ position = [0, 0, 0] as [number, number, number] }) {
       child.position.y = life * 1.1;
       child.position.x = p.x + Math.sin(life * 6 + i) * 0.08;
       child.position.z = p.z;
-      const s = p.scale * (0.5 + life * 1.6);
+      const intensity = cookViz.active ? 0.6 + cookViz.heat * 1.1 : 1;
+      const s = p.scale * (0.5 + life * 1.6) * intensity;
       child.scale.setScalar(s);
       (child as THREE.Mesh).material &&
         ((((child as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity =
-          Math.sin(life * Math.PI) * 0.16));
+          Math.sin(life * Math.PI) * 0.16 * intensity));
     });
   });
 

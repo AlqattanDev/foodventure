@@ -9,10 +9,16 @@ import {
 } from "@react-three/postprocessing";
 import { useState } from "react";
 import { Diorama } from "./scene/Diorama";
-import { Hud } from "./ui/Hud";
+import { CameraRig } from "./scene/CameraRig";
+import { GameUI } from "./ui/GameUI";
+import { useGame } from "./state/game";
 
 export default function App() {
   const [dpr, setDpr] = useState(1.5);
+  const phase = useGame((s) => s.phase);
+  // during the close-up mini-games, back off the "tiny world" DoF so the
+  // pot / plate stay crisp under the finger.
+  const closeUp = phase === "cook" || phase === "prep";
 
   return (
     <>
@@ -21,7 +27,6 @@ export default function App() {
         dpr={dpr}
         gl={{ antialias: false, powerPreference: "high-performance" }}
         camera={{ position: [0, 4.4, 6.6], fov: 34, near: 0.1, far: 100 }}
-        onCreated={({ camera }) => camera.lookAt(0, 1.1, 0.4)}
       >
         {/* warm cozy backdrop */}
         <color attach="background" args={["#20110b"]} />
@@ -33,13 +38,14 @@ export default function App() {
         />
         <AdaptiveDpr pixelated />
 
+        <CameraRig />
         <Diorama />
 
         <EffectComposer multisampling={0}>
           <DepthOfField
-            focusDistance={0.023}
-            focalLength={0.025}
-            bokehScale={3}
+            focusDistance={closeUp ? 0.06 : 0.023}
+            focalLength={closeUp ? 0.06 : 0.025}
+            bokehScale={closeUp ? 1 : 3}
           />
           <Bloom
             intensity={0.9}
@@ -52,7 +58,7 @@ export default function App() {
         </EffectComposer>
       </Canvas>
 
-      <Hud />
+      <GameUI />
     </>
   );
 }
