@@ -5,11 +5,14 @@
 type Kind = "tick" | "light" | "medium" | "heavy" | "success" | "error";
 
 let capHaptics: any = null;
-// Lazy-load the native plugin if present (Capacitor injects it on device).
+// On a real device, use the native Capacitor Haptics plugin. On the web build
+// we deliberately stay on navigator.vibrate (below) to avoid the Capacitor
+// web-proxy no-op warnings.
 (async () => {
   try {
-    // Resolved only inside the native shell; kept dynamic + vite-ignored so the
-    // web build never tries to bundle the (absent) Capacitor plugin.
+    const corePkg = "@capacitor/core";
+    const { Capacitor } = await import(/* @vite-ignore */ corePkg);
+    if (!Capacitor?.isNativePlatform?.()) return;
     const pkg = "@capacitor/haptics";
     const mod = await import(/* @vite-ignore */ pkg);
     capHaptics = mod.Haptics;

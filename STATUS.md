@@ -3,9 +3,9 @@
 **What this is:** Mobile-first, stylized **3D** cooking game. One stall, one dish (Halwa Bahrainiya) in three variations, hand-cooked via a two-phase mini-game. Visuals are the differentiator: warm, cartoonish, premium.
 
 ## Stack
-React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postprocessing (bloom / DoF / vignette) · framer-motion (2D UI juice) · Zustand · vitest · Capacitor (mobile packaging — Milestone 4, next).
+React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postprocessing (bloom / DoF / vignette) · framer-motion (2D UI juice) · Zustand · vitest · Capacitor 6 (iOS + Android shells wired).
 
-## Current state (Milestones 1–3 done — the full loop plays)
+## Current state (Milestones 1–4 done — full loop + mobile shells)
 `npm run dev` → the game runs; `npm run build` and `npm test` are green (15 tests).
 
 **The loop works end to end:** cook → rate → sell → earn → upgrade/unlock, across all three halwa.
@@ -25,13 +25,19 @@ React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postproces
 - All 2D screens live under `src/ui/` and switch on phase via `ui/GameUI.tsx`.
 - Dev-only: `window.useGame` / `window.cookViz` are exposed for manual verification.
 
+## Mobile (Capacitor)
+- `capacitor.config.ts` (appId `dev.exidex.foodventure`, webDir `dist`), plugins: haptics, app, status-bar.
+- `native.ts` runs at boot — sets the status bar / overlay on device, no-ops on web.
+- iOS + Android native projects live in `ios/` and `android/` (gitignored — regenerate with `npx cap add ios android`).
+- Run on device: `npm run ios` / `npm run android` (builds web, `cap sync`, opens Xcode/Studio). `npm run cap:sync` to just push web changes.
+
 ## What's NOT built yet
-- **Milestone 4:** Capacitor iOS/Android packaging + native haptics + touch-target/safe-area pass on device.
+- On-device run: open in Xcode/Studio and run on a simulator/phone (needs signing). Everything is wired for it.
 - Real art assets (still stylized placeholder geometry — but the cooking halwa is a proper hero now).
 
 ## Next steps
-1. Capacitor: add `@capacitor/core cli ios android haptics`, `capacitor.config.ts`, `npx cap add ios/android`, build + run on a device/simulator.
-2. Tune stir/burn balance on a real phone; verify haptics fire natively.
+1. Open `npm run ios`, run on a simulator/device; verify touch + native haptics + safe areas.
+2. Tune stir/burn balance on a real phone.
 
 ## Scope discipline
 V1 = one stall, one dish, three variations. Everything else (cities, staff, weather, spice souq, events, family legacy) is **roadmap only** → see `docs/VISION.md`.
