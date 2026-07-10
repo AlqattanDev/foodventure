@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { DISHES } from "../data/dishes";
 import { useGame } from "../state/game";
 import { cookViz, resetCookViz } from "../game/cookViz";
-import { idealTempo, tempoQuality, clamp01 } from "../game/scoring";
+import { idealTempo, tempoQuality, clamp01, scoreCook } from "../game/scoring";
 import { haptic } from "../game/haptics";
 import { C, FONT } from "./theme";
 
@@ -168,7 +168,7 @@ export function CookGame() {
         haptic("error");
         const smoothness = s.smoothT > 0 ? s.smoothQ / s.smoothT : 0;
         const timing = s.events.length ? s.timingHits / s.events.length : 1;
-        finishCook(prepFromStore(), cookScore(smoothness, timing, 1), true);
+        finishCook(prepFromStore(), scoreCook({ smoothness, timing, burn: 1 }), true);
         return;
       }
       if (s.progress >= 1 && !s.done) {
@@ -178,7 +178,7 @@ export function CookGame() {
         haptic("success");
         const smoothness = s.smoothT > 0 ? s.smoothQ / s.smoothT : 0;
         const timing = s.events.length ? s.timingHits / s.events.length : 1;
-        finishCook(prepFromStore(), cookScore(smoothness, timing, s.burn), false);
+        finishCook(prepFromStore(), scoreCook({ smoothness, timing, burn: s.burn }), false);
         return;
       }
 
@@ -347,11 +347,6 @@ export function CookGame() {
 // prep score was stashed by the store when Phase 1 finished
 function prepFromStore(): number {
   return useGame.getState().prepScore ?? 1;
-}
-function cookScore(smoothness: number, timing: number, burn: number) {
-  // local re-export to avoid an import cycle in the hot path
-  const base = smoothness * 0.6 + timing * 0.4;
-  return clamp01(base * (1 - burn * 0.85));
 }
 
 const S: Record<string, React.CSSProperties> = {
