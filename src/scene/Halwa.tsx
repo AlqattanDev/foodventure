@@ -1,8 +1,21 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import { cookViz } from "../game/cookViz";
 import { Steam } from "./Steam";
+
+/** Rounded-belly copper pot profile, y 0 (base) → 0.46 (flared lip). */
+const POT_PROFILE = [
+  [0.0, 0.0],
+  [0.3, 0.0],
+  [0.44, 0.03],
+  [0.52, 0.16],
+  [0.51, 0.28],
+  [0.46, 0.38],
+  [0.47, 0.43],
+  [0.53, 0.46],
+].map(([x, y]) => new THREE.Vector2(x, y));
 
 /**
  * The hero: copper pot + glossy halwa that cooks live. Reads the cookViz
@@ -107,10 +120,19 @@ export function Halwa() {
 
   return (
     <group position={[-0.35, 0.74, 0.55]}>
-      {/* stove body */}
-      <mesh castShadow>
-        <boxGeometry args={[1.5, 0.28, 1.3]} />
-        <meshStandardMaterial color="#2f2320" roughness={0.4} metalness={0.6} />
+      {/* stove body — dark iron with brass feet and trim */}
+      <RoundedBox args={[1.5, 0.28, 1.3]} radius={0.06} smoothness={4} castShadow>
+        <meshStandardMaterial color="#2f2320" roughness={0.45} metalness={0.6} />
+      </RoundedBox>
+      {[[-0.62, -0.5], [0.62, -0.5], [-0.62, 0.5], [0.62, 0.5]].map(([x, z], i) => (
+        <mesh key={i} position={[x, -0.16, z]} castShadow>
+          <sphereGeometry args={[0.07, 12, 12]} />
+          <meshStandardMaterial color="#e0a05a" metalness={1} roughness={0.3} />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.145, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.5, 0.022, 10, 36]} />
+        <meshStandardMaterial color="#e0a05a" metalness={1} roughness={0.3} />
       </mesh>
       {/* flame ring + glow */}
       <pointLight ref={flameRef} position={[0, 0.25, 0]} intensity={2.2} distance={2.4} color="#ff7a2a" />
@@ -121,14 +143,40 @@ export function Halwa() {
 
       {/* pot + halwa */}
       <group position={[0, 0.42, 0]}>
-        <mesh castShadow>
-          <cylinderGeometry args={[0.5, 0.42, 0.4, 40]} />
-          <meshStandardMaterial color="#c9743a" metalness={0.95} roughness={0.28} />
+        {/* rounded-belly copper body with a flared lip */}
+        <mesh position={[0, -0.2, 0]} castShadow>
+          <latheGeometry args={[POT_PROFILE, 48]} />
+          <meshPhysicalMaterial
+            color="#c9743a"
+            metalness={0.9}
+            roughness={0.32}
+            clearcoat={0.6}
+            clearcoatRoughness={0.4}
+          />
         </mesh>
-        <mesh position={[0, 0.19, 0]} castShadow>
-          <torusGeometry args={[0.49, 0.045, 14, 40]} />
-          <meshStandardMaterial color="#e0a05a" metalness={1} roughness={0.2} />
-        </mesh>
+        {/* brass side handles */}
+        {[-1, 1].map((s) => (
+          <mesh
+            key={s}
+            position={[s * 0.53, 0.02, 0]}
+            rotation={[0, 0, (s * Math.PI) / 2]}
+            castShadow
+          >
+            <torusGeometry args={[0.11, 0.028, 10, 20, Math.PI]} />
+            <meshStandardMaterial color="#e0a05a" metalness={1} roughness={0.25} />
+          </mesh>
+        ))}
+        {/* long wooden stirring paddle resting against the rim */}
+        <group position={[0.3, 0.42, -0.22]} rotation={[0.5, 0.5, -0.9]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.025, 0.03, 0.85, 10]} />
+            <meshStandardMaterial color="#8a5a30" roughness={0.8} />
+          </mesh>
+          <mesh position={[0, -0.46, 0]} scale={[1, 1.6, 0.45]} castShadow>
+            <sphereGeometry args={[0.07, 14, 12]} />
+            <meshStandardMaterial color="#7a4a26" roughness={0.85} />
+          </mesh>
+        </group>
 
         {/* the halwa itself — a glossy domed mound filling the pot */}
         <mesh ref={surfRef} position={[0, 0.16, 0]} scale={[1, 0.46, 1]} castShadow>
