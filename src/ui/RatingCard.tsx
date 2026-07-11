@@ -39,10 +39,15 @@ export function RatingCard() {
         </div>
         <div style={S.quip}>{QUIP[result.stars]}</div>
 
+        {/* per-stage breakdown — which part of the recipe cost you */}
         <div style={S.breakdown}>
-          <Bar label="Prep" v={result.prep} />
-          <Bar label="Cook" v={result.cook} />
+          {result.rating.results.map((r) => (
+            <StageBar key={r.stepId} label={r.title} v={r.score} worst={result.rating.worst?.stepId === r.stepId} />
+          ))}
         </div>
+        {result.rating.worst && !burnt && (
+          <div style={S.worstNote}>Work on <b>{result.rating.worst.title.toLowerCase()}</b> next time</div>
+        )}
 
         {burnt ? (
           <>
@@ -60,16 +65,16 @@ export function RatingCard() {
   );
 }
 
-function Bar({ label, v }: { label: string; v: number }) {
+function StageBar({ label, v, worst }: { label: string; v: number; worst: boolean }) {
   return (
-    <div style={{ flex: 1 }}>
-      <div style={S.barLabel}>{label}</div>
+    <div style={S.stageRow}>
+      <div style={{ ...S.barLabel, color: worst ? C.bad : undefined }}>{label}</div>
       <div style={S.barTrack}>
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: Math.max(0.02, v) }}
           transition={{ delay: 0.3, type: "spring", stiffness: 120, damping: 20 }}
-          style={{ ...S.barFill, background: v > 0.7 ? C.good : v > 0.45 ? C.gold : C.amber }}
+          style={{ ...S.barFill, background: v > 0.7 ? C.good : v > 0.45 ? C.gold : C.bad }}
         />
       </div>
     </div>
@@ -123,9 +128,11 @@ const S: Record<string, React.CSSProperties> = {
   },
   dishName: { fontSize: 22, fontWeight: 900, letterSpacing: 0.3 },
   quip: { fontSize: 15, opacity: 0.9, minHeight: 40, lineHeight: 1.35, padding: "0 6px" },
-  breakdown: { display: "flex", gap: 16, margin: "18px 4px 20px" },
-  barLabel: { fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.6, opacity: 0.8, marginBottom: 5 },
-  barTrack: { height: 10, borderRadius: 999, background: "rgba(20,10,4,0.6)", overflow: "hidden" },
+  breakdown: { display: "flex", flexDirection: "column", gap: 7, margin: "18px 4px 12px" },
+  stageRow: { display: "flex", alignItems: "center", gap: 10 },
+  worstNote: { fontSize: 13, opacity: 0.85, marginBottom: 14 },
+  barLabel: { width: 108, textAlign: "right", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.4, opacity: 0.85 },
+  barTrack: { flex: 1, height: 10, borderRadius: 999, background: "rgba(20,10,4,0.6)", overflow: "hidden" },
   barFill: { height: "100%", transformOrigin: "left", borderRadius: 999 },
   price: { fontSize: 18, fontWeight: 800, margin: "4px 0 16px", color: C.gold },
   waste: { fontSize: 16, fontWeight: 800, color: C.bad, margin: "10px 0 18px" },

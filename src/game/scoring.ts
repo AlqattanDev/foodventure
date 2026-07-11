@@ -16,16 +16,6 @@ export function scorePour(ing: Ingredient, amount: number): number {
   return Math.max(0, 0.8 - over * 0.8);
 }
 
-/** Average pour accuracy across every ingredient → the Phase-1 prep score 0..1. */
-export function scorePrep(dish: Dish, amounts: Record<string, number>): number {
-  if (dish.ingredients.length === 0) return 1;
-  const sum = dish.ingredients.reduce(
-    (acc, ing) => acc + scorePour(ing, amounts[ing.key] ?? 0),
-    0
-  );
-  return sum / dish.ingredients.length;
-}
-
 /** Ideal stir tempo (radians/sec of wrist circling) for a dish's difficulty. */
 export function idealTempo(dish: Dish): { center: number; band: number } {
   // harder dishes want a faster, tighter rhythm
@@ -45,34 +35,6 @@ export function tempoQuality(dish: Dish, speed: number, bandBonus = 0): number {
   if (d <= band) return 1 - (d / band) * 0.4; // 1.0 dead-center → 0.6 at edge
   const over = (d - band) / band;
   return Math.max(0, 0.6 - over * 0.6);
-}
-
-/**
- * Combine the raw cook signals into a final cook score 0..1.
- * - smoothness: avg tempo quality while actively stirring
- * - timing: fraction of scripted add-events nailed
- * - burn: how scorched it got (0 = pristine, 1 = ruined)
- */
-export function scoreCook(opts: {
-  smoothness: number;
-  timing: number;
-  burn: number;
-}): number {
-  const { smoothness, timing, burn } = opts;
-  const base = smoothness * 0.6 + timing * 0.4;
-  return clamp01(base * (1 - burn * 0.85));
-}
-
-/** Map prep + cook (each 0..1) to a 1..5 star rating. Burnt short-circuits to 0. */
-export function starsFor(prep: number, cook: number, burnt: boolean): number {
-  if (burnt) return 0;
-  const combined = prep * 0.4 + cook * 0.6;
-  // generous-ish curve: you have to try to get 1★, 5★ needs real execution
-  if (combined >= 0.9) return 5;
-  if (combined >= 0.75) return 4;
-  if (combined >= 0.58) return 3;
-  if (combined >= 0.4) return 2;
-  return 1;
 }
 
 /** Coins earned selling a dish at a given star count, with upgrade bonuses. */

@@ -16,7 +16,7 @@ interface Shot {
 const SHOTS: Record<Phase, Shot> = {
   idle: { pos: [0, 4.6, 9.2], target: [0, 1.15, 0.1] },
   select: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
-  prep: { pos: [1.5, 3.2, 4.9], target: [1.7, 0.7, 0.9] },
+  book: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
   cook: { pos: [-0.35, 3.35, 5.0], target: [-0.35, 0.95, 0.55] },
   rating: { pos: [0, 4.2, 8.4], target: [-0.2, 1.15, 0.3] },
   sell: { pos: [0, 4.2, 8.6], target: [0, 1.0, 0.4] },

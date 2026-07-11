@@ -1,13 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  scorePour,
-  scorePrep,
-  tempoQuality,
-  idealTempo,
-  scoreCook,
-  starsFor,
-  priceFor,
-} from "./scoring";
+import { scorePour, tempoQuality, idealTempo, priceFor } from "./scoring";
 import { DISHES } from "../data/dishes";
 
 const classic = DISHES.classic;
@@ -31,16 +23,6 @@ describe("scorePour", () => {
   });
 });
 
-describe("scorePrep", () => {
-  it("perfect amounts → ~1", () => {
-    const amts = Object.fromEntries(classic.ingredients.map((i) => [i.key, i.target]));
-    expect(scorePrep(classic, amts)).toBeGreaterThan(0.99);
-  });
-  it("empty plate scores poorly", () => {
-    expect(scorePrep(classic, {})).toBeLessThan(0.5);
-  });
-});
-
 describe("tempoQuality", () => {
   it("peaks at the ideal tempo center", () => {
     const { center } = idealTempo(classic);
@@ -53,28 +35,6 @@ describe("tempoQuality", () => {
   });
   it("harder dishes have a tighter band", () => {
     expect(idealTempo(DISHES.royal).band).toBeLessThan(idealTempo(classic).band);
-  });
-});
-
-describe("scoreCook", () => {
-  it("burn drags the score down hard", () => {
-    const clean = scoreCook({ smoothness: 0.9, timing: 1, burn: 0 });
-    const scorched = scoreCook({ smoothness: 0.9, timing: 1, burn: 0.8 });
-    expect(clean).toBeGreaterThan(0.85);
-    expect(scorched).toBeLessThan(clean * 0.5);
-  });
-});
-
-describe("starsFor", () => {
-  it("burnt is always 0 stars", () => {
-    expect(starsFor(1, 1, true)).toBe(0);
-  });
-  it("great prep + cook → 5 stars", () => {
-    expect(starsFor(1, 1, false)).toBe(5);
-  });
-  it("scales down with worse execution", () => {
-    expect(starsFor(0.3, 0.3, false)).toBeLessThanOrEqual(2);
-    expect(starsFor(0.6, 0.6, false)).toBe(3);
   });
 });
 

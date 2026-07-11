@@ -8,7 +8,7 @@ const CUSTOMERS = ["🧔🏽", "🧕🏽", "👳🏽", "👩🏽", "🧑🏽"];
 
 export function SellCard() {
   const result = useGame((s) => s.result);
-  const startPrep = useGame((s) => s.startPrep);
+  const openBook = useGame((s) => s.openBook);
   const openShop = useGame((s) => s.openShop);
   const openSelect = useGame((s) => s.openSelect);
   if (!result) return null;
@@ -52,7 +52,7 @@ export function SellCard() {
         <div style={S.sub}>{dish.name} · {result.stars}★</div>
 
         <div style={S.actions}>
-          <Button variant="gold" onClick={startPrep} style={{ flex: 1 }}>Cook again</Button>
+          <Button variant="gold" onClick={openBook} style={{ flex: 1 }}>Cook again</Button>
           <Button variant="ghost" onClick={openShop} style={{ flex: 1 }}>Upgrades</Button>
         </div>
         <button style={S.link} onClick={openSelect}>change dish</button>

@@ -50,8 +50,8 @@ export function DishSelect() {
           })}
         </div>
 
-        <Button variant="gold" onClick={g.startPrep} style={{ width: "100%", marginTop: 8 }}>
-          Cook {DISHES[g.selected].name} →
+        <Button variant="gold" onClick={g.openBook} style={{ width: "100%", marginTop: 8 }}>
+          Open the recipe 📖
         </Button>
         <button style={S.link} onClick={g.openShop}>upgrades & unlocks</button>
       </motion.div>

@@ -2,8 +2,8 @@ import { AnimatePresence } from "framer-motion";
 import { useGame } from "../state/game";
 import { Hud } from "./Hud";
 import { DishSelect } from "./DishSelect";
-import { PrepGame } from "./PrepGame";
-import { CookGame } from "./CookGame";
+import { RecipeBook } from "./RecipeBook";
+import { StagedCook } from "./StagedCook";
 import { RatingCard } from "./RatingCard";
 import { SellCard } from "./SellCard";
 import { UpgradeShop } from "./UpgradeShop";
@@ -16,8 +16,8 @@ export function GameUI() {
       <Hud />
       <AnimatePresence mode="wait">
         {phase === "select" && <DishSelect key="select" />}
-        {phase === "prep" && <PrepGame key="prep" />}
-        {phase === "cook" && <CookGame key="cook" />}
+        {phase === "book" && <RecipeBook key="book" />}
+        {phase === "cook" && <StagedCook key="cook" />}
         {phase === "rating" && <RatingCard key="rating" />}
         {phase === "sell" && <SellCard key="sell" />}
         {phase === "shop" && <UpgradeShop key="shop" />}

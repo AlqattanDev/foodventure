@@ -45,10 +45,16 @@ Ali's verdict on the V1 loop: a rhythm mini-game in a cooking costume — boring
 
 A first procedural art pass is on main (rounded copper pot + paddle, expressive chef, striped awning + bunting, lanterns, rug, tiled floor, spice sacks, dallah, glowing arch window); final art polish is PLAN.md Milestone 6.
 
-V2 Milestone 1 is done: `game/recipe.ts` (pure staged-cook engine: 6 stage kinds, per-stage scorers, weighted rating with a no-skippable-stage cap) + `data/recipes.ts` (3 halwa recipes with real ingredients/amounts and educational step text) + 21 engine tests (36 total green). The cook UI still runs the V1 loop until Milestone 2 swaps it.
+**V2 Milestones 1–2 are done.** The game now plays the real recipe:
+- `game/recipe.ts` — pure staged-cook engine (6 stage kinds, per-stage scorers, weighted rating, no-skippable-stage cap), 21 tests.
+- `data/recipes.ts` — 3 halwa recipes, real ingredients/amounts, educational step text.
+- **Cookbook** (`ui/RecipeBook.tsx`) — warm paper page: ingredients w/ amounts (EN+AR), the method with tips; flow is select → book → cook.
+- **Staged cook** (`ui/StagedCook.tsx`) — syrup simmer-hold, slurry pours+stir, feathered combine pour while stirring, the long stir with ghee-ladle cues on sheen-dull, timed spices, player-called doneness. Old PrepGame/CookGame deleted.
+- Rating card shows the six-stage breakdown + "work on X next time".
+- Verified in-browser end-to-end with synthetic touch: a neglected pot burns to 0★, a skilled run lands 5★, a missed spice caps at 2★ (engine floor rule).
 
 ## Next steps
-1. PLAN.md Milestone 2: cookbook UI + rebuild the cook phase as the 6 guided stages driving `recipe.ts`.
+1. PLAN.md Milestone 3: doneness/mastery — mastery mode (book closes at pot-on), mastery tracking, per-dish mastery unlocks.
 2. (Parallel, Ali) `npm run ios` on a simulator/device; verify touch + haptics + safe areas.
 
 ## Scope discipline

@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { DISHES, DISH_ORDER, type DishId } from "../data/dishes";
-import { priceFor, starsFor } from "../game/scoring";
+import { priceFor } from "../game/scoring";
+import type { RunRating } from "../game/recipe";
 
-export type Phase = "idle" | "select" | "prep" | "cook" | "rating" | "sell" | "shop";
+export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "sell" | "shop";
 
 export interface Upgrades {
   /** 0..2 — wider stir tolerance, slower burn */
@@ -18,8 +19,7 @@ export const UPGRADE_COST = {
 
 export interface CookResult {
   dish: DishId;
-  prep: number;
-  cook: number;
+  rating: RunRating;
   stars: number;
   burnt: boolean;
   price: number;
@@ -32,8 +32,6 @@ interface GameState {
   unlocked: Record<DishId, boolean>;
   bestStars: Record<DishId, number>;
   upgrades: Upgrades;
-  prepAmounts: Record<string, number>;
-  prepScore: number;
   result: CookResult | null;
 
   // derived helpers
@@ -45,9 +43,9 @@ interface GameState {
   // flow
   openSelect: () => void;
   select: (id: DishId) => void;
-  startPrep: () => void;
-  finishPrep: (prepScore: number, amounts: Record<string, number>) => void;
-  finishCook: (prep: number, cook: number, burnt: boolean) => void;
+  openBook: () => void;
+  startCook: () => void;
+  finishRun: (rating: RunRating) => void;
   sell: () => void;
   openShop: () => void;
   buyUpgrade: (kind: "pot" | "stove") => void;
@@ -62,8 +60,6 @@ export const useGame = create<GameState>((set, get) => ({
   unlocked: { classic: true, saffron: false, royal: false },
   bestStars: { classic: 0, saffron: 0, royal: 0 },
   upgrades: { pot: 0, stove: 0 },
-  prepAmounts: {},
-  prepScore: 1,
   result: null,
 
   potTolerance: () => get().upgrades.pot * 0.05,
@@ -87,20 +83,18 @@ export const useGame = create<GameState>((set, get) => ({
     if (!get().unlocked[id]) return;
     set({ selected: id, phase: "select" });
   },
-  startPrep: () => set({ phase: "prep", prepAmounts: {}, result: null }),
-  finishPrep: (prepScore, amounts) =>
-    set({ prepScore, prepAmounts: amounts, phase: "cook" }),
+  openBook: () => set({ phase: "book", result: null }),
+  startCook: () => set({ phase: "cook", result: null }),
 
-  finishCook: (prep, cook, burnt) => {
+  finishRun: (rating) => {
     const dish = get().selected;
-    const stars = starsFor(prep, cook, burnt);
-    const price = priceFor(DISHES[dish], stars, get().sellBonus());
+    const price = priceFor(DISHES[dish], rating.stars, get().sellBonus());
     set((s) => ({
       phase: "rating",
-      result: { dish, prep, cook, stars, burnt, price },
+      result: { dish, rating, stars: rating.stars, burnt: rating.burnt, price },
       bestStars: {
         ...s.bestStars,
-        [dish]: Math.max(s.bestStars[dish], stars),
+        [dish]: Math.max(s.bestStars[dish], rating.stars),
       },
     }));
   },

@@ -18,7 +18,7 @@ export default function App() {
   const phase = useGame((s) => s.phase);
   // during the close-up mini-games, back off the "tiny world" DoF so the
   // pot / plate stay crisp under the finger.
-  const closeUp = phase === "cook" || phase === "prep";
+  const closeUp = phase === "cook";
 
   return (
     <>
