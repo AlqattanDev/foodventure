@@ -8,5 +8,13 @@
   "accent": "#E8A33D",
   "order": 45,
   "hidden": false,
-  "tags": ["game", "3d", "three.js", "react", "mobile", "bahrain"]
+  "tags": [
+    "game",
+    "3d",
+    "three.js",
+    "react",
+    "mobile",
+    "bahrain"
+  ],
+  "thumb": "/foodventure/thumb.png"
 }
