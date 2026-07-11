@@ -40,10 +40,14 @@ React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postproces
 - On-device run: open in Xcode/Studio and run on a simulator/phone (needs signing). Everything is wired for it.
 - Real art assets (still stylized placeholder geometry — but the cooking halwa is a proper hero now).
 
+## Direction: V2 redesign (see PLAN.md)
+Ali's verdict on the V1 loop: a rhythm mini-game in a cooking costume — boring, and "add cardamom" makes no sense without a recipe. **PLAN.md** defines V2: the real Halwa Bahrainiya recipe as gameplay (cookbook → guided stages → mastery from memory) plus a live-stall tycoon (customer queue, serving, apprentice). Build proceeds by PLAN.md milestones.
+
+A first procedural art pass is on main (rounded copper pot + paddle, expressive chef, striped awning + bunting, lanterns, rug, tiled floor, spice sacks, dallah, glowing arch window); final art polish is PLAN.md Milestone 6.
+
 ## Next steps
-1. Decide the next part (art pass vs on-device run) — open decision.
-2. Open `npm run ios`, run on a simulator/device; verify touch + native haptics + safe areas.
-3. Tune stir/burn balance on a real phone.
+1. PLAN.md Milestone 1: recipe stage-machine engine + tests.
+2. (Parallel, Ali) `npm run ios` on a simulator/device; verify touch + haptics + safe areas.
 
 ## Scope discipline
 V1 = one stall, one dish, three variations. Everything else (cities, staff, weather, spice souq, events, family legacy) is **roadmap only** → see `docs/VISION.md`.
