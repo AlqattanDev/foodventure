@@ -93,7 +93,9 @@ export function StagedCook() {
         <div style={S.stepTitle}>
           {stepIdx + 1}/{recipe.steps.length} · {step.title}
         </div>
-        <div style={S.instruction}>{step.instruction}</div>
+        <MemoryAware>
+          <div style={S.instruction}>{step.instruction}</div>
+        </MemoryAware>
       </div>
 
       {/* the active stage */}
@@ -893,8 +895,11 @@ function SpiceStage({ step, onDone }: { step: TimedAddStep; onDone: (s: StepSumm
 
 function FinishStage({ step, onDone }: { step: FinishCallStep; onDone: (s: StepSummary) => void }) {
   const tracker = useStirTracker();
+  // from memory, nothing signals the window — you read the pot itself
+  const memory = useGame((s) => s.cookMode) === "memory";
   const sim = useRef({ doneness: 0, done: false });
-  const [ready, setReady] = useState(false);
+  const [readyRaw, setReady] = useState(false);
+  const ready = readyRaw && !memory;
 
   useRaf((dt) => {
     const s = sim.current;
@@ -955,8 +960,16 @@ function FinishStage({ step, onDone }: { step: FinishCallStep; onDone: (s: StepS
 
 /* ------------------------------------------------------------------ */
 
+/** Renders children only in guided mode — memory runs cook without prompts. */
+function MemoryAware({ children }: { children: React.ReactNode }) {
+  const memory = useGame((s) => s.cookMode) === "memory";
+  return memory ? null : <>{children}</>;
+}
+
 function Hint({ text, tone }: { text: string; tone?: "good" | "bad" | "warn" }) {
+  const memory = useGame((s) => s.cookMode) === "memory";
   const color = tone === "good" ? C.good : tone === "bad" ? C.bad : tone === "warn" ? C.gold : C.cream;
+  if (memory) return null;
   return (
     <div style={S.hintWrap}>
       <AnimatePresence mode="wait">

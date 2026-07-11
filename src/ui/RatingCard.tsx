@@ -34,6 +34,19 @@ export function RatingCard() {
       <motion.div initial={{ scale: 0.8, opacity: 0, y: 30 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={pop} style={S.card}>
         {!burnt && <ConfettiRing stars={result.stars} />}
         <div style={S.dishName}>{dish.name}</div>
+        {result.mode === "memory" && (
+          <div style={S.memoryTag}>🧠 cooked from memory</div>
+        )}
+        {result.justMastered && (
+          <motion.div
+            initial={{ scale: 0, rotate: -8 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.9, ...pop }}
+            style={S.mastered}
+          >
+            🏅 MASTERED
+          </motion.div>
+        )}
         <div style={{ margin: "14px 0 10px" }}>
           <Stars value={result.stars} size={40} animate />
         </div>
@@ -127,6 +140,15 @@ const S: Record<string, React.CSSProperties> = {
     overflow: "hidden",
   },
   dishName: { fontSize: 22, fontWeight: 900, letterSpacing: 0.3 },
+  memoryTag: { fontSize: 12.5, fontWeight: 800, opacity: 0.8, marginTop: 4 },
+  mastered: {
+    fontSize: 18,
+    fontWeight: 900,
+    color: C.gold,
+    margin: "8px 0 0",
+    filter: "drop-shadow(0 0 16px rgba(255,190,70,0.6))",
+    letterSpacing: 1,
+  },
   quip: { fontSize: 15, opacity: 0.9, minHeight: 40, lineHeight: 1.35, padding: "0 6px" },
   breakdown: { display: "flex", flexDirection: "column", gap: 7, margin: "18px 4px 12px" },
   stageRow: { display: "flex", alignItems: "center", gap: 10 },

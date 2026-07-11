@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { DISHES, DISH_ORDER, type DishId } from "../data/dishes";
 import { priceFor } from "../game/scoring";
 import type { RunRating } from "../game/recipe";
+import {
+  FRESH_MASTERY,
+  advanceMastery,
+  memoryUnlocked,
+  type CookMode,
+  type MasteryState,
+} from "../game/mastery";
 
 export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "sell" | "shop";
 
@@ -23,6 +30,9 @@ export interface CookResult {
   stars: number;
   burnt: boolean;
   price: number;
+  mode: CookMode;
+  /** this run is the one that mastered the dish */
+  justMastered: boolean;
 }
 
 interface GameState {
@@ -31,6 +41,9 @@ interface GameState {
   selected: DishId;
   unlocked: Record<DishId, boolean>;
   bestStars: Record<DishId, number>;
+  mastery: Record<DishId, MasteryState>;
+  /** how the current/next cook runs — guided (book + hints) or from memory */
+  cookMode: CookMode;
   upgrades: Upgrades;
   result: CookResult | null;
 
@@ -39,6 +52,8 @@ interface GameState {
   burnResist: () => number; // burn slowdown from upgrades
   sellBonus: () => number; // price bump from... (reserved, currently 0)
   canUnlock: (id: DishId) => boolean;
+  memoryAvailable: (id: DishId) => boolean;
+  setCookMode: (m: CookMode) => void;
 
   // flow
   openSelect: () => void;
@@ -59,6 +74,8 @@ export const useGame = create<GameState>((set, get) => ({
   selected: "classic",
   unlocked: { classic: true, saffron: false, royal: false },
   bestStars: { classic: 0, saffron: 0, royal: 0 },
+  mastery: { classic: FRESH_MASTERY, saffron: FRESH_MASTERY, royal: FRESH_MASTERY },
+  cookMode: "guided",
   upgrades: { pot: 0, stove: 0 },
   result: null,
 
@@ -83,15 +100,30 @@ export const useGame = create<GameState>((set, get) => ({
     if (!get().unlocked[id]) return;
     set({ selected: id, phase: "select" });
   },
-  openBook: () => set({ phase: "book", result: null }),
+  memoryAvailable: (id) => memoryUnlocked(get().mastery[id]),
+  setCookMode: (m) => set({ cookMode: m }),
+
+  openBook: () => set({ phase: "book", result: null, cookMode: "guided" }),
   startCook: () => set({ phase: "cook", result: null }),
 
   finishRun: (rating) => {
     const dish = get().selected;
+    const mode = get().cookMode;
     const price = priceFor(DISHES[dish], rating.stars, get().sellBonus());
+    const before = get().mastery[dish];
+    const after = advanceMastery(before, mode, rating.stars);
     set((s) => ({
       phase: "rating",
-      result: { dish, rating, stars: rating.stars, burnt: rating.burnt, price },
+      result: {
+        dish,
+        rating,
+        stars: rating.stars,
+        burnt: rating.burnt,
+        price,
+        mode,
+        justMastered: after.mastered && !before.mastered,
+      },
+      mastery: { ...s.mastery, [dish]: after },
       bestStars: {
         ...s.bestStars,
         [dish]: Math.max(s.bestStars[dish], rating.stars),

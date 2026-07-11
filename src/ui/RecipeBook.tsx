@@ -14,8 +14,13 @@ export function RecipeBook() {
   const selected = useGame((s) => s.selected);
   const startCook = useGame((s) => s.startCook);
   const openSelect = useGame((s) => s.openSelect);
+  const cookMode = useGame((s) => s.cookMode);
+  const setCookMode = useGame((s) => s.setCookMode);
+  const memoryOk = useGame((s) => s.memoryAvailable(selected));
+  const mastery = useGame((s) => s.mastery[selected]);
   const recipe = RECIPES[selected];
   const dish = recipe.dish;
+  const memory = cookMode === "memory";
 
   return (
     <div style={S.backdrop}>
@@ -59,8 +64,31 @@ export function RecipeBook() {
         </div>
 
         <div style={S.footer}>
+          {mastery.mastered && <div style={S.masteredBadge}>🏅 Mastered — cooked from memory</div>}
+          {memoryOk && !mastery.mastered && (
+            <div style={S.modeRow}>
+              {(["guided", "memory"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setCookMode(m)}
+                  style={{
+                    ...S.modeBtn,
+                    background: cookMode === m ? "#c99a52" : "rgba(201,154,82,0.16)",
+                    color: cookMode === m ? "#fff8ec" : "#6a4526",
+                  }}
+                >
+                  {m === "guided" ? "📖 Guided" : "🧠 From memory"}
+                </button>
+              ))}
+            </div>
+          )}
+          {memory && (
+            <div style={S.memoryNote}>
+              The book closes when the pot goes on. {mastery.memoryGood}/2 memory runs at 4★+ to master it.
+            </div>
+          )}
           <Button variant="gold" onClick={startCook} style={{ width: "100%" }}>
-            Put the pot on 🔥
+            {memory ? "I know it — pot on 🧠" : "Put the pot on 🔥"}
           </Button>
           <button style={S.link} onClick={openSelect}>
             back to the menu
@@ -156,6 +184,27 @@ const S: Record<string, React.CSSProperties> = {
     display: "inline-block",
   },
   footer: { marginTop: 18, textAlign: "center" },
+  masteredBadge: {
+    fontSize: 14,
+    fontWeight: 900,
+    color: "#8a5a22",
+    background: "rgba(201,154,82,0.2)",
+    borderRadius: 12,
+    padding: "8px 14px",
+    marginBottom: 10,
+  },
+  modeRow: { display: "flex", gap: 8, justifyContent: "center", marginBottom: 10 },
+  modeBtn: {
+    border: "1px solid rgba(162,112,58,0.4)",
+    borderRadius: 999,
+    padding: "9px 18px",
+    fontSize: 13.5,
+    fontWeight: 800,
+    cursor: "pointer",
+    fontFamily: FONT,
+    transition: "background 0.15s",
+  },
+  memoryNote: { fontSize: 12.5, opacity: 0.8, marginBottom: 10, fontStyle: "italic" },
   link: {
     display: "block",
     margin: "10px auto 0",

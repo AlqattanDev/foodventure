@@ -43,6 +43,7 @@ export function DishSelect() {
                     <Stars value={g.bestStars[id]} size={14} />
                     <span style={S.price}>🪙 {dish.basePrice}+</span>
                     <span style={S.diff}>{"🌶️".repeat(dish.difficulty)}</span>
+                    {g.mastery[id].mastered && <span style={{ fontSize: 13 }}>🏅</span>}
                   </div>
                 </div>
               </motion.button>
