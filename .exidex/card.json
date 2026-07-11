@@ -1,0 +1,12 @@
+{
+  "slug": "foodventure",
+  "title": "Foodventure",
+  "tagline": "Cook Halwa Bahrainiya at a cozy 3D souq stall — pour, stir, spice, sell.",
+  "kind": "game",
+  "platform": "mobile",
+  "repo": "https://github.com/AlqattanDev/foodventure",
+  "accent": "#E8A33D",
+  "order": 45,
+  "hidden": false,
+  "tags": ["game", "3d", "three.js", "react", "mobile", "bahrain"]
+}

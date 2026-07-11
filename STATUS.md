@@ -25,6 +25,11 @@ React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postproces
 - All 2D screens live under `src/ui/` and switch on phase via `ui/GameUI.tsx`.
 - Dev-only: `window.useGame` / `window.cookViz` are exposed for manual verification.
 
+## Deploy (exidex showcase)
+- Live at **exidex.dev/foodventure** — the Mac Mini showcase serves `.exidex/` (built game + `card.json`) straight from the repo.
+- `npm run exidex` rebuilds and stages `dist/` into `.exidex/` (keeps `card.json`); commit + push, then the Mini's sync pulls it.
+- Remote: `github.com/AlqattanDev/foodventure`.
+
 ## Mobile (Capacitor)
 - `capacitor.config.ts` (appId `dev.exidex.foodventure`, webDir `dist`), plugins: haptics, app, status-bar.
 - `native.ts` runs at boot — sets the status bar / overlay on device, no-ops on web.
@@ -36,8 +41,9 @@ React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postproces
 - Real art assets (still stylized placeholder geometry — but the cooking halwa is a proper hero now).
 
 ## Next steps
-1. Open `npm run ios`, run on a simulator/device; verify touch + native haptics + safe areas.
-2. Tune stir/burn balance on a real phone.
+1. Decide the next part (art pass vs on-device run) — open decision.
+2. Open `npm run ios`, run on a simulator/device; verify touch + native haptics + safe areas.
+3. Tune stir/burn balance on a real phone.
 
 ## Scope discipline
 V1 = one stall, one dish, three variations. Everything else (cities, staff, weather, spice souq, events, family legacy) is **roadmap only** → see `docs/VISION.md`.
