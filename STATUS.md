@@ -45,8 +45,10 @@ Ali's verdict on the V1 loop: a rhythm mini-game in a cooking costume — boring
 
 A first procedural art pass is on main (rounded copper pot + paddle, expressive chef, striped awning + bunting, lanterns, rug, tiled floor, spice sacks, dallah, glowing arch window); final art polish is PLAN.md Milestone 6.
 
+V2 Milestone 1 is done: `game/recipe.ts` (pure staged-cook engine: 6 stage kinds, per-stage scorers, weighted rating with a no-skippable-stage cap) + `data/recipes.ts` (3 halwa recipes with real ingredients/amounts and educational step text) + 21 engine tests (36 total green). The cook UI still runs the V1 loop until Milestone 2 swaps it.
+
 ## Next steps
-1. PLAN.md Milestone 1: recipe stage-machine engine + tests.
+1. PLAN.md Milestone 2: cookbook UI + rebuild the cook phase as the 6 guided stages driving `recipe.ts`.
 2. (Parallel, Ali) `npm run ios` on a simulator/device; verify touch + haptics + safe areas.
 
 ## Scope discipline
