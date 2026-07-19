@@ -5,6 +5,7 @@ import {
   serveCustomer,
   spawnInterval,
   repDelta,
+  tableBonus,
   TABLE_SPOTS,
   type TickCtx,
   type EateryEvent,
@@ -104,5 +105,14 @@ describe("explicit happiness override", () => {
     // 5★ food served fresh, but the caller says they felt ripped off
     expect(serveCustomer(s, c.id, 5, false)).toBe(true);
     expect(c.happy).toBe(false);
+  });
+});
+
+describe("the majlis premium", () => {
+  it("wing tables (6+) pay a premium; terrace tables don't", () => {
+    expect(tableBonus(0)).toBe(1);
+    expect(tableBonus(5)).toBe(1);
+    expect(tableBonus(6)).toBeGreaterThan(1);
+    expect(tableBonus(9)).toBeGreaterThan(1);
   });
 });

@@ -15,6 +15,7 @@ import {
   tickEatery,
   serveCustomer,
   repDelta,
+  tableBonus,
   type EateryState,
 } from "./eatery";
 import { pickChefDish, pickServeTarget, chefStars, CHEF_COOK_SECONDS } from "./staff";
@@ -262,7 +263,8 @@ function serveWithMenu(customerId: number, dish: DishId, stars: number) {
   const happy = verdict !== "ripped" && stars >= 3 && c.patience > 0.25;
   serveCustomer(eatery, customerId, stars, happy);
   const pay = payFor(DISHES[dish].basePrice, stars, mult, c.servedAtPatience);
-  g.applyServe(dish, pay.total);
+  // majlis guests pay a premium for the room
+  g.applyServe(dish, Math.round(pay.total * tableBonus(c.table)));
   g.applyRep(valueRep(verdict));
 }
 

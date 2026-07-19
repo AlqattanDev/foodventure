@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { DISHES, DISH_ORDER } from "../data/dishes";
-import { useGame, UPGRADE_COST, TABLE_COST } from "../state/game";
+import { useGame, UPGRADE_COST, TABLE_COST, MAJLIS_COST, MAJLIS_REP } from "../state/game";
 import { SERVER_HIRE, CHEF_HIRE, MAX_SERVERS, MAX_CHEFS, EQUIPMENT_COST } from "../game/staff";
 import { WAGE } from "../game/ledger";
 import { Button, Coin } from "./kit";
@@ -37,27 +37,52 @@ export function UpgradeShop() {
           coins={g.coins}
           onBuy={() => g.buyUpgrade("stove")}
         />
-        {g.opened && g.tables < 6 && (
-          <div style={S.row}>
-            <div style={S.icon}>🪑</div>
-            <div style={{ flex: 1 }}>
-              <div style={S.rName}>
-                Another Table
-                <span style={S.pips}>{[0, 1, 2, 3].map((i) => (
-                  <span key={i} style={{ ...S.pip, background: i < g.tables - 2 ? C.gold : "rgba(255,220,170,0.18)" }} />
-                ))}</span>
+        {g.opened && (
+          <>
+            <div style={S.section}>Expansion</div>
+            {g.floorTier < 1 && (
+              <div style={S.row}>
+                <div style={S.icon}>🏛️</div>
+                <div style={{ flex: 1 }}>
+                  <div style={S.rName}>The Majlis Wing</div>
+                  <div style={S.rDesc}>
+                    {g.reputation < MAJLIS_REP
+                      ? `🔒 Needs ${MAJLIS_REP}★ souq reputation (you: ${g.reputation.toFixed(1)})`
+                      : "A roofed, carpeted room — 4 premium tables, richer guests, higher rent."}
+                  </div>
+                </div>
+                <Button
+                  variant={g.coins >= MAJLIS_COST && g.reputation >= MAJLIS_REP ? "gold" : "ghost"}
+                  disabled={g.coins < MAJLIS_COST || g.reputation < MAJLIS_REP}
+                  onClick={g.buyMajlis}
+                  style={{ padding: "12px 16px", fontSize: 14 }}
+                >
+                  🪙 {MAJLIS_COST}
+                </Button>
               </div>
-              <div style={S.rDesc}>Seat more of the souq — {g.tables}/6 tables on the terrace.</div>
-            </div>
-            <Button
-              variant={g.coins >= TABLE_COST[g.tables - 2] ? "gold" : "ghost"}
-              disabled={g.coins < TABLE_COST[g.tables - 2]}
-              onClick={g.buyTable}
-              style={{ padding: "12px 16px", fontSize: 14 }}
-            >
-              🪙 {TABLE_COST[g.tables - 2]}
-            </Button>
-          </div>
+            )}
+            {g.tables < (g.floorTier >= 1 ? 10 : 6) && (
+              <div style={S.row}>
+                <div style={S.icon}>🪑</div>
+                <div style={{ flex: 1 }}>
+                  <div style={S.rName}>Another Table</div>
+                  <div style={S.rDesc}>
+                    {g.tables}/{g.floorTier >= 1 ? 10 : 6} tables
+                    {g.floorTier >= 1 && g.tables >= 6 ? " — the next one seats the majlis" : " on the terrace"}
+                    {g.floorTier < 1 && g.tables >= 5 ? " (the majlis wing adds 4 more)" : ""}.
+                  </div>
+                </div>
+                <Button
+                  variant={g.coins >= TABLE_COST[g.tables - 2] ? "gold" : "ghost"}
+                  disabled={g.coins < TABLE_COST[g.tables - 2]}
+                  onClick={g.buyTable}
+                  style={{ padding: "12px 16px", fontSize: 14 }}
+                >
+                  🪙 {TABLE_COST[g.tables - 2]}
+                </Button>
+              </div>
+            )}
+          </>
         )}
         <UpgradeRow
           icon="🗄️"

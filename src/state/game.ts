@@ -45,9 +45,12 @@ export interface Batch {
   servings: number;
 }
 
-/** Cost of the 3rd..6th table. */
-export const TABLE_COST = [80, 150, 240, 360];
+/** Cost of the 3rd..10th table (7-10 live in the majlis wing). */
+export const TABLE_COST = [80, 150, 240, 360, 300, 380, 460, 550];
 export const SERVINGS_PER_BATCH = 5;
+/** The majlis wing build-out. */
+export const MAJLIS_COST = 500;
+export const MAJLIS_REP = 3;
 
 export interface Staff {
   servers: number;
@@ -105,8 +108,10 @@ interface GameState {
   batches: Record<DishId, Batch | null>;
   /** 0..5 — how the souq talks about the place; drives walk-ins */
   reputation: number;
-  /** owned tables (2..6) */
+  /** owned tables (2..6 terrace, 7..10 with the majlis wing) */
   tables: number;
+  /** 0 = terrace only, 1 = + majlis wing (more rent, richer guests) */
+  floorTier: number;
   /** the eatery goes live once the first batch reaches the counter */
   opened: boolean;
   /** the payroll — servers carry plates, chefs cook mastered dishes */
@@ -147,6 +152,7 @@ interface GameState {
   /** a customer walked out unserved — the day's books remember */
   applyLost: () => void;
   buyTable: () => void;
+  buyMajlis: () => void;
   hireStaff: (kind: keyof Staff, cost: number) => void;
   buyEquipment: (kind: keyof Equipment, cost: number) => void;
   /** batch size with the current pot */
@@ -186,6 +192,7 @@ interface SaveBlob {
   opened: boolean;
   staff: Staff;
   equipment: Equipment;
+  floorTier: number;
   day: number;
   ledgers: DayLedger[];
   pendingSpend: number;
@@ -217,6 +224,7 @@ function persist(s: GameState) {
       opened: s.opened,
       staff: s.staff,
       equipment: s.equipment,
+      floorTier: s.floorTier,
       day: s.day,
       ledgers: s.ledgers,
       pendingSpend: s.pendingSpend,
@@ -257,6 +265,7 @@ export const useGame = create<GameState>((set, get) => ({
   opened: saved.opened ?? false,
   staff: migrateStaff(saved.staff),
   equipment: saved.equipment ?? { stove2: false, bigPot: false },
+  floorTier: saved.floorTier ?? 0,
   day: saved.day ?? 1,
   dayOpen: false,
   dayTallies: { revenue: 0, ingredientSpend: 0, served: 0, lost: 0 },
@@ -365,10 +374,17 @@ export const useGame = create<GameState>((set, get) => ({
 
   buyTable: () => {
     const t = get().tables;
-    if (t >= 6) return;
+    const max = get().floorTier >= 1 ? 10 : 6;
+    if (t >= max) return;
     const cost = TABLE_COST[t - 2];
     if (get().coins < cost) return;
     set((s) => ({ coins: s.coins - cost, tables: t + 1 }));
+  },
+
+  buyMajlis: () => {
+    const s = get();
+    if (s.floorTier >= 1 || s.coins < MAJLIS_COST || s.reputation < MAJLIS_REP) return;
+    set((st) => ({ coins: st.coins - MAJLIS_COST, floorTier: 1 }));
   },
 
   hireStaff: (kind, cost) => {
@@ -409,7 +425,7 @@ export const useGame = create<GameState>((set, get) => ({
       s.day,
       s.dayTallies,
       s.staff,
-      0,
+      s.floorTier,
       s.repStart,
       s.reputation,
       s.coins

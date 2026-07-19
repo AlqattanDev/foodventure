@@ -27,6 +27,7 @@ const OUTFITS = [
 export function Eatery() {
   const opened = useGame((s) => s.opened);
   const tables = useGame((s) => s.tables);
+  const floorTier = useGame((s) => s.floorTier);
   // re-mount customer groups when the floor picture changes
   useSyncExternalStore(subscribeEatery, eaterySnapshot);
 
@@ -58,6 +59,9 @@ export function Eatery() {
           <meshStandardMaterial color="#b5561f" roughness={0.7} />
         </mesh>
       </group>
+
+      {/* the majlis wing — appears when bought */}
+      {floorTier >= 1 && <MajlisWing />}
 
       {/* tables you own */}
       {TABLE_SPOTS.slice(0, tables).map((spot, i) => (
@@ -171,6 +175,51 @@ function ChefStation({ idx, position }: { idx: number; position: [number, number
           <meshStandardMaterial color="#ffffff" roughness={0.9} />
         </mesh>
       </group>
+    </group>
+  );
+}
+
+/** The majlis wing: walls, a low roof, carpets and lanterns on the left. */
+function MajlisWing() {
+  return (
+    <group>
+      {/* carpeted floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-3.15, GROUND + 0.012, 4.6]} receiveShadow>
+        <planeGeometry args={[2.3, 3.5]} />
+        <meshStandardMaterial color="#7e2b26" roughness={1} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-3.15, GROUND + 0.02, 4.6]}>
+        <planeGeometry args={[1.7, 2.9]} />
+        <meshStandardMaterial color="#a63c2e" roughness={1} />
+      </mesh>
+      {/* outer wall + far wall */}
+      <RoundedBox args={[0.16, 1.7, 3.7]} radius={0.05} position={[-4.28, GROUND + 0.85, 4.6]} castShadow>
+        <meshStandardMaterial color="#c9a36a" roughness={0.9} />
+      </RoundedBox>
+      <RoundedBox args={[2.4, 1.7, 0.16]} radius={0.05} position={[-3.15, GROUND + 0.85, 6.42]} castShadow>
+        <meshStandardMaterial color="#c9a36a" roughness={0.9} />
+      </RoundedBox>
+      {/* entry arch posts from the terrace side */}
+      {[3.05, 6.15].map((z) => (
+        <mesh key={z} position={[-2.1, GROUND + 0.8, z]} castShadow>
+          <cylinderGeometry args={[0.09, 0.11, 1.6, 10]} />
+          <meshStandardMaterial color="#a97b45" roughness={0.85} />
+        </mesh>
+      ))}
+      {/* low roof */}
+      <RoundedBox args={[2.6, 0.14, 3.8]} radius={0.05} position={[-3.2, GROUND + 1.78, 4.6]} rotation={[0, 0, 0.06]} castShadow>
+        <meshStandardMaterial color="#8c4a26" roughness={0.8} />
+      </RoundedBox>
+      {/* lanterns */}
+      {[3.7, 5.5].map((z) => (
+        <group key={z} position={[-3.2, GROUND + 1.45, z]}>
+          <mesh>
+            <sphereGeometry args={[0.09, 10, 10]} />
+            <meshStandardMaterial color="#ffd27a" emissive="#ff9d3a" emissiveIntensity={1.6} toneMapped={false} />
+          </mesh>
+          <pointLight intensity={0.55} distance={2.4} color="#ffb45e" />
+        </group>
+      ))}
     </group>
   );
 }

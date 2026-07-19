@@ -15,15 +15,28 @@ export interface Spot {
   z: number;
 }
 
-/** Where each owned table stands (buyable up to 6). */
+/** Where each owned table stands — 0-5 on the terrace, 6-9 in the majlis wing. */
 export const TABLE_SPOTS: Spot[] = [
   { x: -1.7, z: 3.3 },
   { x: 1.5, z: 3.4 },
   { x: -0.1, z: 4.35 },
   { x: 2.9, z: 4.5 },
-  { x: -2.7, z: 4.6 },
+  { x: -2.2, z: 4.5 },
   { x: 1.0, z: 5.4 },
+  // the majlis wing (left side, under the roof)
+  { x: -3.55, z: 3.5 },
+  { x: -2.85, z: 4.45 },
+  { x: -3.65, z: 5.3 },
+  { x: -2.8, z: 5.95 },
 ];
+
+/** First table index that sits inside the majlis wing. */
+export const MAJLIS_TABLE_START = 6;
+
+/** Majlis guests pay a premium for the room. */
+export function tableBonus(tableIdx: number): number {
+  return tableIdx >= MAJLIS_TABLE_START ? 1.35 : 1;
+}
 
 export const DOOR: Spot = { x: 4.3, z: 5.1 };
 /** Front of the queue, near the counter; the line snakes toward the door. */
