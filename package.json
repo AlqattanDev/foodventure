@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "exidex": "npm run build && rsync -a --delete --exclude card.json dist/ .exidex/",
+    "exidex": "npm run build && rsync -a --delete --exclude card.json --exclude thumb.png dist/ .exidex/",
     "cap:sync": "npm run build && cap sync",
     "ios": "npm run build && cap sync ios && cap open ios",
     "android": "npm run build && cap sync android && cap open android"

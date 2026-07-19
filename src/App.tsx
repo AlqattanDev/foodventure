@@ -44,10 +44,11 @@ export default function App() {
         <Eatery />
 
         <EffectComposer multisampling={0}>
+          {/* the floor is gameplay now — keep the wide shot mostly crisp */}
           <DepthOfField
-            focusDistance={closeUp ? 0.06 : 0.023}
-            focalLength={closeUp ? 0.06 : 0.025}
-            bokehScale={closeUp ? 1 : 3}
+            focusDistance={closeUp ? 0.06 : 0.032}
+            focalLength={closeUp ? 0.06 : 0.03}
+            bokehScale={closeUp ? 1 : 1.8}
           />
           <Bloom
             intensity={0.9}

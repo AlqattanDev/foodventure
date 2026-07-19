@@ -415,7 +415,9 @@ function BowlMix({
 /* the other. Thin stream or it lumps; stop stirring and it sticks.    */
 /* ------------------------------------------------------------------ */
 
-function CombineStage({ step, onDone }: { step: PourWhileStirStep; onDone: (s: StepSummary) => void }) {
+// the pour length is player-controlled (the bowl's volume), so the step data
+// carries no knobs the stage needs
+function CombineStage({ onDone }: { step: PourWhileStirStep; onDone: (s: StepSummary) => void }) {
   const ptr = useRef<PadPointer>({ x: 0, y: 0, down: false });
   const grid = useRef(createStir(SCORCH_N));
   const pour = useRef(createPour()); // fill here = how much slurry has gone in

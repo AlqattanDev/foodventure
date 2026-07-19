@@ -1,68 +1,50 @@
 # STATUS — Foodventure: Khaliji Edition
 
-**What this is:** Mobile-first, stylized **3D** cooking game. One stall, one dish (Halwa Bahrainiya) in three variations, hand-cooked via a two-phase mini-game. Visuals are the differentiator: warm, cartoonish, premium.
+**What this is:** Mobile-first, stylized 3D cooking-tycoon game. You really cook Halwa Bahrainiya with your hands (tilt-pour measuring, free stirring over a pot that scorches where you neglect it), then run a live souq eatery — tables, walking customers, a server and a chef on payroll, ingredients bought at the souq market.
 
 ## Stack
-React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postprocessing (bloom / DoF / vignette) · framer-motion (2D UI juice) · Zustand · vitest · Capacitor 6 (iOS + Android shells wired).
+React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postprocessing · framer-motion · Zustand · vitest · Capacitor 6 (iOS + Android shells wired).
 
-## Current state (Milestones 1–4 done — full loop + mobile shells)
-`npm run dev` → the game runs; `npm run build` and `npm test` are green (15 tests).
+## Current state (V3 Milestones 1–6 done)
+`npm run dev` runs it; `npm run build` and `npm test` green (**73 tests**).
 
-**The loop works end to end:** cook → rate → sell → earn → upgrade/unlock, across all three halwa.
+### The cook — hands, not bars (M1–M2)
+- **Measuring** (`ui/cook/PourVessel.tsx` + `game/pour.ts`): hold a vessel, drag up to tilt; the level rises to an etched line on the bowl. The stream dribbles off when you right it; overshoot is spooned back slowly. No gauges.
+- **Stirring** (`ui/cook/StirPad.tsx` + `game/stir.ts`): the finger is the paddle, any path counts. The pot bottom is a scorch grid — neglected cells visibly darken, then permanently scorch, with smoke off the worst spot. Coverage matters, not rhythm; the V1/V2 circular-tempo mechanic is deleted.
+- **Heat** (`ui/cook/GasKnob.tsx` + `game/burner.ts`): a gas knob with thermal lag; the thermometer is the pot's rim bubbles (still/beads/simmer/rolling).
+- **Ghee & spices** (`ui/cook/DragAdd.tsx`): physically dragged to the pot in their timing windows.
+- **The pot is the interface** (`game/cookViz.ts` → `scene/Halwa.tsx`): paddle follows the finger, pour streams fall and splash, ghee pools melt in, scorch patches render as instanced blobs on the dome, sheen dulling = the ghee cue.
+- 7 recipe stages (`data/recipes.ts`), engine unchanged in shape (`game/recipe.ts`, tested): syrup base → simmer → slurry → combine (true two-thumb multi-touch) → long stir → spices → player-called doneness.
 
-- ✅ Cozy stall **diorama** with a live **hero halwa** (`Halwa.tsx`) that cooks in real time — pale starch → glossy amber, bubbles with the stir, scorches if burnt, sparkles on a nailed spice add.
-- ✅ **Camera rig** (`CameraRig.tsx`) eases between per-phase framings; DoF backs off for the close-up mini-games.
-- ✅ Reactive **chef** (`Chef.tsx`) — bobs while cooking, hops on a 4–5★ result.
-- ✅ **Phase 1 Prep** (`PrepGame.tsx`) — hold-to-pour each real ingredient, release in the green band.
-- ✅ **Phase 2 Cook** (`CookGame.tsx`, the heart) — drag in circles at a steady rhythm; keep it moving or it burns; manage heat (Low/Med/High); tap the spice cue on time. Live meters + tempo ring.
-- ✅ **Rating** flourish, **Sell** (cute customers + coins), **Upgrade shop** (Copper Pot / Brass Stove, 3 tiers each) and **recipe unlocks** (Saffron needs 3★ on Classic + coins; Royal needs 3★ on Saffron).
-- ✅ Pure, tested scoring (`game/scoring.ts` + `scoring.test.ts`).
+### The economy (M3)
+- `game/pantry.ts` + `data/ingredients.ts`: real stock, consumed at pot-on (cookbook amounts). Souq market screen (grain/dairy/spice/nuts stalls) fills the shelf; shelf upgrades raise capacity. No-softlock neighbour rule (broke + empty shelf → free classic basics).
+- Cookbook shows have/need; cook button becomes "to the souq" when short.
+- **Persistence**: full save to localStorage on every change (`foodventure-save-v3`).
+
+### The eatery (M4–M5)
+- `game/eatery.ts` (pure sim, tested): customers walk in from the souq gate, queue, seat at terrace tables (2 owned → 6 buyable), order, patience drains, eat, tip by quality × freshness of patience, leave; reputation (0..5) drives walk-in rate.
+- A finished cook = a 5-serving batch at that run's stars, stocked at the counter ("To the counter →" on the rating card). Serving = tapping order chips with patience rings (`ui/ServeTray.tsx`); instant sale is gone.
+- **Live-cook rule:** a service cook leaves the world running (a "🧍 N waiting" badge shows the pressure); only a **practice cook** (book page toggle, half ingredients, no batch) pauses it.
+- **Staff** (`game/staff.ts` tested + `game/eateryLive.ts`): hired **server** walks plates to tables (keeps 20% of tips); hired **chef** (gated on mastering a dish) auto-cooks mastered dishes at one star below your best, consuming real pantry stock, 12 coins/batch.
+
+### Mastery ladder (from V2, unchanged)
+Two 4★+ guided runs unlock memory mode; two 4★+ memory runs = 🏅 MASTERED (gates the chef).
 
 ## Architecture notes
-- Game state: Zustand store `state/game.ts` (phases, economy, upgrades, results).
-- 60fps cook visuals share a mutable singleton `game/cookViz.ts` (the sim writes, the 3D reads) — deliberately outside React to avoid re-render churn.
-- Haptics wrapper `game/haptics.ts` (Web Vibration now; swaps to Capacitor Haptics in the native build).
-- All 2D screens live under `src/ui/` and switch on phase via `ui/GameUI.tsx`.
-- Dev-only: `window.useGame` / `window.cookViz` are exposed for manual verification.
+- Game state: Zustand `state/game.ts` (phases, economy, pantry, batches, staff, persistence).
+- 60fps visuals: mutable singletons outside React — `game/cookViz.ts` (pot), `game/eateryLive.ts` (floor + staff bodies) — sims write, R3F reads.
+- Pure logic modules all unit-tested driving production paths: `pour`, `stir`, `burner`, `recipe`, `scoring`, `mastery`, `pantry`, `eatery`, `staff`.
+- Dev handles on `window`: `useGame`, `cookViz`, `eatery`, `staffLive`, `__pour`.
 
 ## Deploy (exidex showcase)
-- Live at **exidex.dev/foodventure** — the Mac Mini showcase serves `.exidex/` (built game + `card.json`) straight from the repo.
-- `npm run exidex` rebuilds and stages `dist/` into `.exidex/` (keeps `card.json`); commit + push, then the Mini's sync pulls it.
+- exidex.dev/foodventure — `npm run exidex` rebuilds `.exidex/`; commit + push and the Mini pulls it. Card is currently `hidden: true` (Ali's call, pending his playtest).
 - Remote: `github.com/AlqattanDev/foodventure`.
 
 ## Mobile (Capacitor)
-- `capacitor.config.ts` (appId `dev.exidex.foodventure`, webDir `dist`), plugins: haptics, app, status-bar.
-- `native.ts` runs at boot — sets the status bar / overlay on device, no-ops on web.
-- iOS + Android native projects live in `ios/` and `android/` (gitignored — regenerate with `npx cap add ios android`).
-- Run on device: `npm run ios` / `npm run android` (builds web, `cap sync`, opens Xcode/Studio). `npm run cap:sync` to just push web changes.
+- `npm run ios` / `npm run android` (builds web, `cap sync`, opens IDE). Multi-touch combine stage and haptics need a real-device pass.
 
-## What's NOT built yet
-- On-device run: open in Xcode/Studio and run on a simulator/phone (needs signing). Everything is wired for it.
-- Real art assets (still stylized placeholder geometry — but the cooking halwa is a proper hero now).
-
-## Direction: V2 redesign (see PLAN.md)
-Ali's verdict on the V1 loop: a rhythm mini-game in a cooking costume — boring, and "add cardamom" makes no sense without a recipe. **PLAN.md** defines V2: the real Halwa Bahrainiya recipe as gameplay (cookbook → guided stages → mastery from memory) plus a live-stall tycoon (customer queue, serving, apprentice). Build proceeds by PLAN.md milestones.
-
-A first procedural art pass is on main (rounded copper pot + paddle, expressive chef, striped awning + bunting, lanterns, rug, tiled floor, spice sacks, dallah, glowing arch window); final art polish is PLAN.md Milestone 6.
-
-**V2 Milestones 1–3 are done.** The game now plays the real recipe:
-- `game/recipe.ts` — pure staged-cook engine (6 stage kinds, per-stage scorers, weighted rating, no-skippable-stage cap), 21 tests.
-- `data/recipes.ts` — 3 halwa recipes, real ingredients/amounts, educational step text.
-- **Cookbook** (`ui/RecipeBook.tsx`) — warm paper page: ingredients w/ amounts (EN+AR), the method with tips; flow is select → book → cook.
-- **Staged cook** (`ui/StagedCook.tsx`) — syrup simmer-hold, slurry pours+stir, feathered combine pour while stirring, the long stir with ghee-ladle cues on sheen-dull, timed spices, player-called doneness. Old PrepGame/CookGame deleted.
-- Rating card shows the six-stage breakdown + "work on X next time".
-- **Mastery ladder** (`game/mastery.ts`, tested): two 4★+ guided runs unlock "from memory" mode (picked on the book page; book closes at pot-on, no instructions/hints, no doneness signal — you read the pot). Two 4★+ memory runs = 🏅 MASTERED (badge on rating, book, dish card).
-- Verified in-browser end-to-end with synthetic touch: a neglected pot burns to 0★, a skilled run lands 5★, a missed spice caps at 2★ (engine floor rule); memory mode confirmed to strip all guidance.
-
-## Known gaps
-- No persistence — progress resets on reload (add before the stall makes grinding meaningful).
-
-## Next steps
-1. PLAN.md Milestone 4: the live stall — customers queue, serve from cooked batches, reputation. (Mastery now gates it: apprentice comes in Milestone 5.)
-2. (Parallel, Ali) `npm run ios` on a simulator/device; verify touch + haptics + safe areas.
-
-## Scope discipline
-V1 = one stall, one dish, three variations. Everything else (cities, staff, weather, spice souq, events, family legacy) is **roadmap only** → see `docs/VISION.md`.
-
-## Build brief
-Full self-contained build prompt: `BUILD_PROMPT.md`.
+## Known gaps / next steps
+1. **Ali playtest** — the whole point of V3 was feel; nothing else moves until he plays it (web or device) and verdicts the cook + the floor.
+2. Balance pass with real play data (tips vs ingredient costs vs staff cuts are first-guess numbers).
+3. Final art/juice pass (Milestone 6 of PLAN.md was cleanup + deploy; the big art polish still waits on validated gameplay).
+4. On-device run (signing) — everything is wired.

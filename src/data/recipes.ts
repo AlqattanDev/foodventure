@@ -1,11 +1,10 @@
 /**
- * The V2 cookbook: Halwa Bahrainiya's real process as staged recipes.
+ * The cookbook: Halwa Bahrainiya's real process as staged recipes.
  * Educational content is genuine — a player who reads the book learns how
  * halwa is actually made (starch not flour, bloomed saffron, ghee in batches,
  * the long patient stir, calling doneness by look).
  *
- * Econ/display meta still lives in dishes.ts; the cook UI swap (PLAN.md
- * Milestone 2) folds it in here and deletes dishes.ts.
+ * Menu/econ meta lives in dishes.ts; pantry economics in ingredients.ts.
  */
 import { DISHES, type Dish, type DishId } from "./dishes";
 import type { RecipeStep } from "../game/recipe";
@@ -94,7 +93,6 @@ function halwaSteps(opts: {
       instruction: "Pour the slurry into the simmering syrup in a thin stream — never stop stirring.",
       edu: "The make-or-break moment: the slurry goes into the hot syrup in a slow, thin stream while the other hand never stops stirring. Pour fast and it lumps; stop stirring and it sticks and scorches.",
       tip: "Thin stream, constant stir. Patience beats speed.",
-      pourSeconds: 6,
       weight: 1.25,
     },
     {

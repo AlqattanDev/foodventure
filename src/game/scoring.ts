@@ -2,10 +2,17 @@
  * Pure scoring logic for the cooking mini-game. No React, no Three — just math,
  * so it can be unit-tested against the real production code paths.
  */
-import type { Dish, Ingredient } from "../data/dishes";
+import type { Dish } from "../data/dishes";
+
+export interface PourTarget {
+  /** target fill 0..1 of the vessel */
+  target: number;
+  /** half-width of the "perfect" band around target */
+  tolerance: number;
+}
 
 /** Score a single poured ingredient 0..1 by how close it landed to target. */
-export function scorePour(ing: Ingredient, amount: number): number {
+export function scorePour(ing: PourTarget, amount: number): number {
   const d = Math.abs(amount - ing.target);
   if (d <= ing.tolerance) {
     // inside the perfect band — near 1, tapering to ~0.8 at the edge

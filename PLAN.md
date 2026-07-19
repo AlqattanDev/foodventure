@@ -49,13 +49,13 @@ Recipe engine keeps its stage/summary/scorer shape; summaries change inputs: sti
 - Cookbook page shows have/need per ingredient; cook button blocked without stock.
 - **Persistence**: full game state to localStorage (mandatory now the economy is real).
 
-## Milestones (each: tests green → in-browser verify → commit to main → push)
+## Milestones — ALL BUILT (V3 M1–M6 on main, 2026-07-19)
 
-1. **Pure sims**: `pour.ts`, `stir.ts`, engine rework + tests.
-2. **Cook UI rebuild**: the six stages above, bars/ring deleted, cookViz + Halwa animation pass.
-3. **Pantry + market + persistence.**
-4. **Eatery**: sim + 3D floor + serving + reputation + live-cook rule.
-5. **Staff**: server + chef + reworked shop (tables, shelves, staff, pot/stove).
-6. **Balance + juice + docs + exidex redeploy.**
+All six milestones are committed and pushed; see STATUS.md for the current
+state and file map. What remains is not build work:
 
-Launch a fresh session with: `claude "read PLAN.md and implement it"`
+1. **Ali plays it** — the cook feel and the floor need his verdict before
+   anything else (that was the whole point of V3).
+2. Balance pass from real play (tips / ingredient prices / staff cuts).
+3. Final art & juice pass on top of validated gameplay.
+4. On-device Capacitor run (multi-touch combine + haptics).

@@ -28,7 +28,7 @@ const pourStir: PourStirStep = {
 };
 const combine: PourWhileStirStep = {
   id: "combine", kind: "pour-while-stir", title: "Marrying them",
-  instruction: "", edu: "", pourSeconds: 6, weight: 1.25,
+  instruction: "", edu: "", weight: 1.25,
 };
 const longStir: StirBatchesStep = {
   id: "longstir", kind: "stir-batches", title: "The long stir",

@@ -63,7 +63,6 @@ export interface PourStirStep extends StepBase {
 
 export interface PourWhileStirStep extends StepBase {
   kind: "pour-while-stir";
-  pourSeconds: number;
 }
 
 export interface BatchCue {
@@ -185,11 +184,7 @@ export function scoreStep(step: RecipeStep, summary: StepSummary): number {
       const pourAvg =
         step.pours.reduce(
           (acc, p) =>
-            acc +
-            scorePour(
-              { key: p.key, label: p.label, emoji: p.emoji, color: p.color, target: p.target, tolerance: p.tolerance },
-              s.pourAmounts[p.key] ?? 0
-            ),
+            acc + scorePour({ target: p.target, tolerance: p.tolerance }, s.pourAmounts[p.key] ?? 0),
           0
         ) / Math.max(1, step.pours.length);
       const smooth = clamp01(s.smoothSeconds / step.smoothSeconds);

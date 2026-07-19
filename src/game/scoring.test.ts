@@ -3,7 +3,7 @@ import { scorePour, priceFor } from "./scoring";
 import { DISHES } from "../data/dishes";
 
 const classic = DISHES.classic;
-const ing = classic.ingredients[0]; // cornflour, target 0.6 tol 0.14
+const ing = { target: 0.6, tolerance: 0.14 };
 
 describe("scorePour", () => {
   it("gives ~1 dead on target", () => {
@@ -16,9 +16,8 @@ describe("scorePour", () => {
   });
   it("falls off outside the band and floors at 0 for a wild miss", () => {
     expect(scorePour(ing, ing.target + ing.tolerance * 2)).toBeLessThan(0.6);
-    // cardamom (target 0.25, tol 0.1) poured to the brim is a total miss → 0
-    const cardamom = classic.ingredients[3];
-    expect(scorePour(cardamom, 1)).toBe(0);
+    // a tight-tolerance spice poured to the brim is a total miss → 0
+    expect(scorePour({ target: 0.25, tolerance: 0.1 }, 1)).toBe(0);
     expect(scorePour(ing, 0)).toBeGreaterThanOrEqual(0);
   });
 });
