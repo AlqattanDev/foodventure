@@ -14,12 +14,12 @@ interface Shot {
 }
 
 const SHOTS: Record<Phase, Shot> = {
-  idle: { pos: [0, 4.6, 9.2], target: [0, 1.15, 0.1] },
-  select: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
+  // home pulls back far enough to hold the terrace tables in frame
+  idle: { pos: [0, 7.2, 13.4], target: [0, 0.35, 1.9] },
+  select: { pos: [0, 6.6, 12.6], target: [0, 0.5, 1.6] },
   book: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
   cook: { pos: [-0.35, 3.35, 5.0], target: [-0.35, 0.95, 0.55] },
   rating: { pos: [0, 4.2, 8.4], target: [-0.2, 1.15, 0.3] },
-  sell: { pos: [0, 4.2, 8.6], target: [0, 1.0, 0.4] },
   shop: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
   market: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
 };

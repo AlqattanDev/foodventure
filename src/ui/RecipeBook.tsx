@@ -25,6 +25,9 @@ export function RecipeBook() {
   const stock = useGame((s) => s.stock);
   const canCookNow = useGame((s) => s.canCookSelected());
   const openMarket = useGame((s) => s.openMarket);
+  const purpose = useGame((s) => s.cookPurpose);
+  const setPurpose = useGame((s) => s.setCookPurpose);
+  const opened = useGame((s) => s.opened);
   const need = CONSUMPTION[selected];
 
   return (
@@ -100,6 +103,28 @@ export function RecipeBook() {
           {memory && (
             <div style={S.memoryNote}>
               The book closes when the pot goes on. {mastery.memoryGood}/2 memory runs at 4★+ to master it.
+            </div>
+          )}
+          {opened && (
+            <div style={S.modeRow}>
+              {(["service", "practice"] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPurpose(p)}
+                  style={{
+                    ...S.modeBtn,
+                    background: purpose === p ? "#c99a52" : "rgba(201,154,82,0.16)",
+                    color: purpose === p ? "#fff8ec" : "#6a4526",
+                  }}
+                >
+                  {p === "service" ? "🍽️ For the counter" : "🎯 Practice (½ ingredients)"}
+                </button>
+              ))}
+            </div>
+          )}
+          {purpose === "practice" && (
+            <div style={S.memoryNote}>
+              The eatery pauses while you practice — no batch, half the ingredients.
             </div>
           )}
           {canCookNow ? (

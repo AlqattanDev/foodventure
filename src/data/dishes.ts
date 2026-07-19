@@ -30,6 +30,8 @@ export interface Dish {
   id: DishId;
   name: string;
   arabic: string;
+  /** menu/serving glyph */
+  emoji: string;
   blurb: string;
   /** base sell price at 3 stars */
   basePrice: number;
@@ -51,6 +53,7 @@ export const DISHES: Record<DishId, Dish> = {
     id: "classic",
     name: "Classic Halwa",
     arabic: "حلوى",
+    emoji: "🍯",
     blurb: "Cornflour, sugar, ghee & cardamom, stirred to a glossy amber.",
     basePrice: 30,
     difficulty: 1,
@@ -70,6 +73,7 @@ export const DISHES: Record<DishId, Dish> = {
     id: "saffron",
     name: "Saffron Halwa",
     arabic: "حلوى بالزعفران",
+    emoji: "🌸",
     blurb: "The classic laced with real saffron threads bloomed in rose water.",
     basePrice: 55,
     difficulty: 2,
@@ -93,6 +97,7 @@ export const DISHES: Record<DishId, Dish> = {
     id: "royal",
     name: "Royal Halwa",
     arabic: "حلوى ملكية",
+    emoji: "👑",
     blurb: "Saffron, rose water and toasted nuts folded through — the feast-day halwa.",
     basePrice: 95,
     difficulty: 3,

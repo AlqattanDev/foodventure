@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { DISHES } from "../data/dishes";
-import { useGame } from "../state/game";
+import { useGame, SERVINGS_PER_BATCH } from "../state/game";
 import { Button, Stars } from "./kit";
 import { C, FONT, pop } from "./theme";
 import { haptic } from "../game/haptics";
@@ -17,8 +17,9 @@ const QUIP: Record<number, string> = {
 
 export function RatingCard() {
   const result = useGame((s) => s.result);
-  const sell = useGame((s) => s.sell);
+  const stockBatch = useGame((s) => s.stockBatch);
   const toIdle = useGame((s) => s.toIdle);
+  const practice = useGame((s) => s.cookPurpose) === "practice";
   const dish = result ? DISHES[result.dish] : null;
 
   useEffect(() => {
@@ -64,13 +65,18 @@ export function RatingCard() {
 
         {burnt ? (
           <>
-            <div style={S.waste}>🔥 Wasted batch — no sale</div>
-            <Button variant="ghost" onClick={toIdle}>Back to stall</Button>
+            <div style={S.waste}>🔥 Wasted batch — the ingredients are gone</div>
+            <Button variant="ghost" onClick={toIdle}>Back to the stall</Button>
+          </>
+        ) : practice ? (
+          <>
+            <div style={S.price}>Practice run — nothing for the counter</div>
+            <Button variant="gold" onClick={toIdle} style={{ width: "100%" }}>Back to the stall</Button>
           </>
         ) : (
           <>
-            <div style={S.price}>Sells for 🪙 {result.price}</div>
-            <Button variant="gold" onClick={sell} style={{ width: "100%" }}>Serve it up →</Button>
+            <div style={S.price}>{SERVINGS_PER_BATCH} servings, ready to serve</div>
+            <Button variant="gold" onClick={stockBatch} style={{ width: "100%" }}>To the counter →</Button>
           </>
         )}
       </motion.div>

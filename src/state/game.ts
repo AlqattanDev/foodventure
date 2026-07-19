@@ -19,7 +19,19 @@ import {
   type IngredientId,
 } from "../game/pantry";
 
-export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "sell" | "shop" | "market";
+export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "shop" | "market";
+
+/** Why the pot went on: a batch for the counter, or a paused practice run. */
+export type CookPurpose = "service" | "practice";
+
+export interface Batch {
+  stars: number;
+  servings: number;
+}
+
+/** Cost of the 3rd..6th table. */
+export const TABLE_COST = [80, 150, 240, 360];
+export const SERVINGS_PER_BATCH = 5;
 
 export interface Upgrades {
   /** 0..2 — slower burn (a thicker pot forgives) */
@@ -56,9 +68,19 @@ interface GameState {
   mastery: Record<DishId, MasteryState>;
   /** how the current/next cook runs — guided (book + hints) or from memory */
   cookMode: CookMode;
+  /** service = batch for the counter (world keeps running); practice = paused, half ingredients */
+  cookPurpose: CookPurpose;
   upgrades: Upgrades;
   /** the pantry — every cook consumes real stock */
   stock: Stock;
+  /** the counter — one batch per dish, what customers are served from */
+  batches: Record<DishId, Batch | null>;
+  /** 0..5 — how the souq talks about the place; drives walk-ins */
+  reputation: number;
+  /** owned tables (2..6) */
+  tables: number;
+  /** the eatery goes live once the first batch reaches the counter */
+  opened: boolean;
   result: CookResult | null;
 
   // derived helpers
@@ -68,6 +90,7 @@ interface GameState {
   canCookSelected: () => boolean;
   memoryAvailable: (id: DishId) => boolean;
   setCookMode: (m: CookMode) => void;
+  setCookPurpose: (p: CookPurpose) => void;
 
   // flow
   openSelect: () => void;
@@ -75,7 +98,12 @@ interface GameState {
   openBook: () => void;
   startCook: () => void;
   finishRun: (rating: RunRating) => void;
-  sell: () => void;
+  /** the finished batch goes to the counter; the eatery is live from then on */
+  stockBatch: () => void;
+  /** a serving leaves the counter, the tip comes in (called by the eatery runtime) */
+  applyServe: (dish: DishId, tip: number) => void;
+  applyRep: (delta: number) => void;
+  buyTable: () => void;
   openShop: () => void;
   openMarket: () => void;
   buyIngredient: (id: IngredientId, qty: number) => void;
@@ -95,6 +123,10 @@ interface SaveBlob {
   mastery: Record<DishId, MasteryState>;
   upgrades: Upgrades;
   stock: Stock;
+  batches: Record<DishId, Batch | null>;
+  reputation: number;
+  tables: number;
+  opened: boolean;
 }
 
 function loadSave(): Partial<SaveBlob> {
@@ -116,6 +148,10 @@ function persist(s: GameState) {
       mastery: s.mastery,
       upgrades: s.upgrades,
       stock: s.stock,
+      batches: s.batches,
+      reputation: s.reputation,
+      tables: s.tables,
+      opened: s.opened,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(blob));
   } catch {
@@ -133,8 +169,13 @@ export const useGame = create<GameState>((set, get) => ({
   bestStars: saved.bestStars ?? { classic: 0, saffron: 0, royal: 0 },
   mastery: saved.mastery ?? { classic: FRESH_MASTERY, saffron: FRESH_MASTERY, royal: FRESH_MASTERY },
   cookMode: "guided",
+  cookPurpose: "service",
   upgrades: saved.upgrades ?? { pot: 0, stove: 0, shelf: 0 },
   stock: saved.stock ?? starterStock(),
+  batches: saved.batches ?? { classic: null, saffron: null, royal: null },
+  reputation: saved.reputation ?? 0,
+  tables: saved.tables ?? 2,
+  opened: saved.opened ?? false,
   result: null,
 
   burnResist: () => get().upgrades.pot * 0.12 + get().upgrades.stove * 0.14,
@@ -152,7 +193,7 @@ export const useGame = create<GameState>((set, get) => ({
     );
   },
 
-  canCookSelected: () => canCook(get().stock, get().selected),
+  canCookSelected: () => canCook(get().stock, get().selected, get().cookPurpose === "practice"),
 
   openSelect: () => {
     // the neighbour rule: never let the game softlock on an empty shelf
@@ -165,13 +206,15 @@ export const useGame = create<GameState>((set, get) => ({
   },
   memoryAvailable: (id) => memoryUnlocked(get().mastery[id]),
   setCookMode: (m) => set({ cookMode: m }),
+  setCookPurpose: (p) => set({ cookPurpose: p }),
 
-  openBook: () => set({ phase: "book", result: null, cookMode: "guided" }),
+  openBook: () => set({ phase: "book", result: null, cookMode: "guided", cookPurpose: "service" }),
 
   startCook: () => {
     // pot-on consumes the shelf — a burnt batch still cost real ingredients
-    if (!canCook(get().stock, get().selected)) return;
-    set((s) => ({ phase: "cook", result: null, stock: consume(s.stock, s.selected) }));
+    const half = get().cookPurpose === "practice";
+    if (!canCook(get().stock, get().selected, half)) return;
+    set((s) => ({ phase: "cook", result: null, stock: consume(s.stock, s.selected, half) }));
   },
 
   finishRun: (rating) => {
@@ -199,10 +242,37 @@ export const useGame = create<GameState>((set, get) => ({
     }));
   },
 
-  sell: () => {
+  stockBatch: () => {
     const r = get().result;
-    if (!r) return set({ phase: "idle" });
-    set((s) => ({ coins: s.coins + r.price, phase: "sell" }));
+    if (!r || r.burnt || r.stars === 0 || get().cookPurpose === "practice") {
+      return set({ phase: "idle" });
+    }
+    set((s) => ({
+      phase: "idle",
+      opened: true,
+      batches: { ...s.batches, [r.dish]: { stars: r.stars, servings: SERVINGS_PER_BATCH } },
+    }));
+  },
+
+  applyServe: (dish, tip) => {
+    const b = get().batches[dish];
+    if (!b || b.servings <= 0) return;
+    const left = b.servings - 1;
+    set((s) => ({
+      coins: s.coins + tip,
+      batches: { ...s.batches, [dish]: left > 0 ? { ...b, servings: left } : null },
+    }));
+  },
+
+  applyRep: (delta) =>
+    set((s) => ({ reputation: Math.max(0, Math.min(5, s.reputation + delta)) })),
+
+  buyTable: () => {
+    const t = get().tables;
+    if (t >= 6) return;
+    const cost = TABLE_COST[t - 2];
+    if (get().coins < cost) return;
+    set((s) => ({ coins: s.coins - cost, tables: t + 1 }));
   },
 
   openShop: () => set({ phase: "shop" }),

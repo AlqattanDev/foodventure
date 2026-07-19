@@ -9,6 +9,7 @@ import {
 } from "@react-three/postprocessing";
 import { useState } from "react";
 import { Diorama } from "./scene/Diorama";
+import { Eatery } from "./scene/Eatery";
 import { CameraRig } from "./scene/CameraRig";
 import { GameUI } from "./ui/GameUI";
 import { useGame } from "./state/game";
@@ -40,6 +41,7 @@ export default function App() {
 
         <CameraRig />
         <Diorama />
+        <Eatery />
 
         <EffectComposer multisampling={0}>
           <DepthOfField
