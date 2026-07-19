@@ -480,7 +480,7 @@ export const useGame = create<GameState>((set, get) => ({
   },
 
   buyIngredient: (id, qty) => {
-    const r = buy(get().stock, id, qty, get().coins, get().upgrades.shelf);
+    const r = buy(get().stock, id, qty, get().coins, get().upgrades.shelf, get().day);
     if (r.bought === 0) return;
     const spent = get().coins - r.coins;
     set((s) => ({

@@ -59,9 +59,28 @@ export function consume(stock: Stock, dish: DishId, half = false): Stock {
   return next;
 }
 
-/** Cost of buying `qty` units at the souq. */
-export function priceOf(id: IngredientId, qty: number): number {
-  return INGREDIENTS[id].price * qty;
+/** Buying 5+ at once earns the souq's bulk rate. */
+export const BULK_QTY = 5;
+export const BULK_OFF = 0.15;
+
+/**
+ * Today's unit price — the souq moves ±20% day to day (deterministic per
+ * ingredient+day, so a reload can't reroll the market).
+ */
+export function unitPrice(id: IngredientId, day: number): number {
+  const base = INGREDIENTS[id].price;
+  // cheap seeded hash → stable wobble in [-0.2, +0.2]
+  let h = day * 31 + id.length * 7;
+  for (let i = 0; i < id.length; i++) h = (h * 33 + id.charCodeAt(i)) % 1000003;
+  const wobble = ((h % 41) / 40 - 0.5) * 0.4;
+  return Math.max(1, Math.round(base * (1 + wobble)));
+}
+
+/** Cost of buying `qty` units at today's price, bulk discount included. */
+export function priceOf(id: IngredientId, qty: number, day = 0): number {
+  const unit = day > 0 ? unitPrice(id, day) : INGREDIENTS[id].price;
+  const raw = unit * qty;
+  return qty >= BULK_QTY ? Math.max(1, Math.round(raw * (1 - BULK_OFF))) : raw;
 }
 
 /**
@@ -73,16 +92,19 @@ export function buy(
   id: IngredientId,
   qty: number,
   coins: number,
-  shelfLevel: number
+  shelfLevel: number,
+  day = 0
 ): { stock: Stock; coins: number; bought: number } {
   const cap = capacityFor(id, shelfLevel);
   const room = Math.max(0, cap - stock[id]);
-  const affordable = Math.floor(coins / INGREDIENTS[id].price);
-  const bought = Math.max(0, Math.min(qty, room, affordable));
+  // largest affordable count ≤ min(qty, room) — bulk pricing makes this
+  // non-linear, so walk down from the ask
+  let bought = Math.max(0, Math.min(qty, room));
+  while (bought > 0 && priceOf(id, bought, day) > coins) bought--;
   if (bought === 0) return { stock, coins, bought: 0 };
   return {
     stock: { ...stock, [id]: stock[id] + bought },
-    coins: coins - bought * INGREDIENTS[id].price,
+    coins: coins - priceOf(id, bought, day),
     bought,
   };
 }

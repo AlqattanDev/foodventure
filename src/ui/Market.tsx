@@ -5,6 +5,8 @@ import {
   INGREDIENT_ORDER,
   capacityFor,
   priceOf,
+  unitPrice,
+  BULK_QTY,
   type IngredientId,
 } from "../game/pantry";
 import { Button, Coin } from "./kit";
@@ -63,10 +65,14 @@ function MarketRow({ id, shelf }: { id: IngredientId; shelf: number }) {
   const item = INGREDIENTS[id];
   const stock = useGame((s) => s.stock[id]);
   const coins = useGame((s) => s.coins);
+  const day = useGame((s) => s.day);
   const buy = useGame((s) => s.buyIngredient);
   const cap = capacityFor(id, shelf);
   const full = stock >= cap;
-  const canOne = !full && coins >= priceOf(id, 1);
+  const today = unitPrice(id, day);
+  const trend = today > item.price ? "▲" : today < item.price ? "▼" : "";
+  const canOne = !full && coins >= priceOf(id, 1, day);
+  const bulkOk = !full && cap - stock >= BULK_QTY && coins >= priceOf(id, BULK_QTY, day);
 
   return (
     <div style={S.row}>
@@ -74,6 +80,11 @@ function MarketRow({ id, shelf }: { id: IngredientId; shelf: number }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={S.rName}>
           {item.label} <span style={S.rAr}>{item.arabic}</span>
+          {trend && (
+            <span style={{ ...S.trend, color: trend === "▲" ? C.bad : C.good }}>
+              {trend} today
+            </span>
+          )}
         </div>
         <div style={S.shelfRow}>
           <div style={S.shelfTrack}>
@@ -93,14 +104,14 @@ function MarketRow({ id, shelf }: { id: IngredientId; shelf: number }) {
             disabled={!canOne}
             onClick={() => buy(id, 1)}
           >
-            +1 · 🪙{priceOf(id, 1)}
+            +1 · 🪙{priceOf(id, 1, day)}
           </button>
           <button
-            style={{ ...S.buyBtnGhost, opacity: canOne ? 1 : 0.4 }}
-            disabled={!canOne}
-            onClick={() => buy(id, 99)}
+            style={{ ...S.buyBtnGhost, opacity: bulkOk ? 1 : 0.4 }}
+            disabled={!bulkOk}
+            onClick={() => buy(id, BULK_QTY)}
           >
-            fill
+            +{BULK_QTY} · 🪙{priceOf(id, BULK_QTY, day)}
           </button>
         </div>
       )}
@@ -132,6 +143,7 @@ const S: Record<string, React.CSSProperties> = {
   icon: { fontSize: 26, width: 42, height: 42, display: "grid", placeItems: "center", background: "rgba(20,10,4,0.4)", borderRadius: 13, flexShrink: 0 },
   rName: { fontSize: 15, fontWeight: 800, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
   rAr: { fontSize: 12, fontWeight: 600, opacity: 0.6, marginLeft: 3 },
+  trend: { fontSize: 10, fontWeight: 900, marginLeft: 6 },
   shelfRow: { display: "flex", alignItems: "center", gap: 8, marginTop: 5 },
   shelfTrack: { flex: 1, height: 7, borderRadius: 4, background: "rgba(20,10,4,0.55)", overflow: "hidden", maxWidth: 110 },
   shelfFill: { height: "100%", borderRadius: 4, background: `linear-gradient(90deg, ${C.saffron}, ${C.gold})`, transition: "width 0.25s" },

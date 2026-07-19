@@ -6,9 +6,13 @@ import {
   canCook,
   consume,
   buy,
+  priceOf,
+  unitPrice,
   classicRestockCost,
   ummKhalidLends,
   INGREDIENTS,
+  BULK_QTY,
+  BULK_OFF,
 } from "./pantry";
 
 describe("stock & consumption", () => {
@@ -74,5 +78,35 @@ describe("the neighbour rule (no softlock)", () => {
 
   it("no lending while you can afford the restock", () => {
     expect(ummKhalidLends(empty, classicRestockCost(empty), { classic: true })).toBeNull();
+  });
+});
+
+describe("market depth", () => {
+  it("bulk buys earn the discount", () => {
+    const unit = INGREDIENTS.sugar.price;
+    expect(priceOf("sugar", 4)).toBe(unit * 4);
+    expect(priceOf("sugar", BULK_QTY)).toBe(Math.round(unit * BULK_QTY * (1 - BULK_OFF)));
+  });
+
+  it("daily prices wobble but stay deterministic and bounded", () => {
+    for (const id of ["sugar", "saffron", "ghee"] as const) {
+      for (let day = 1; day <= 30; day++) {
+        const p = unitPrice(id, day);
+        expect(p).toBe(unitPrice(id, day)); // stable per day
+        expect(p).toBeGreaterThanOrEqual(Math.max(1, Math.floor(INGREDIENTS[id].price * 0.8)));
+        expect(p).toBeLessThanOrEqual(Math.ceil(INGREDIENTS[id].price * 1.2));
+      }
+    }
+    // and it actually moves across days
+    const prices = new Set(Array.from({ length: 15 }, (_, d) => unitPrice("sugar", d + 1)));
+    expect(prices.size).toBeGreaterThan(1);
+  });
+
+  it("buy() charges the bulk price, not the linear one", () => {
+    const s = { ...starterStock(), sugar: 0 };
+    const cost5 = priceOf("sugar", 5);
+    const r = buy(s, "sugar", 5, cost5, 0);
+    expect(r.bought).toBe(5);
+    expect(r.coins).toBe(0);
   });
 });

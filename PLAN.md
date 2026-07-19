@@ -51,7 +51,11 @@ Recipe engine keeps its stage/summary/scorer shape; summaries change inputs: sti
 
 ## V3 milestones M1–M6: BUILT (on main, 2026-07-19). See STATUS.md.
 
-## Part D — The REAL tycoon layer (Ali, 2026-07-19: "it's not a tycoon, I want real tycoon experience")
+## Part D — The REAL tycoon layer — ALL BUILT (T1–T6 on main, 2026-07-19)
+
+_(Ali, 2026-07-19: "it's not a tycoon, I want real tycoon experience." What
+follows is the design as built; STATUS.md has the current state. Remaining:
+Ali's playtest → balance → art pass → device run.)_
 
 The M4/M5 floor was service-sim-lite: an always-on trickle, invisible wages,
 no business decisions. The tycoon loop that replaces it:
