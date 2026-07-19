@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { DISHES, DISH_ORDER } from "../data/dishes";
 import { useGame, UPGRADE_COST, TABLE_COST } from "../state/game";
-import { HIRE_COST } from "../game/staff";
+import { SERVER_HIRE, CHEF_HIRE, MAX_SERVERS, MAX_CHEFS, EQUIPMENT_COST } from "../game/staff";
 import { WAGE } from "../game/ledger";
 import { Button, Coin } from "./kit";
 import { C, FONT, pop } from "./theme";
@@ -71,29 +71,57 @@ export function UpgradeShop() {
 
         {g.opened && (
           <>
-            <div style={S.section}>Staff</div>
-            <HireRow
+            <div style={S.section}>Staff · payroll</div>
+            <RosterRow
               icon="🤵"
-              name="Server"
-              desc={`Carries plates to the tables for you — ${WAGE.server} coins/day wage.`}
-              hired={g.staff.server}
-              cost={HIRE_COST.server}
+              name="Servers"
+              desc={`Walk plates to the tables — ${WAGE.server}/day wage each.`}
+              count={g.staff.servers}
+              max={MAX_SERVERS}
+              cost={SERVER_HIRE[g.staff.servers]}
               coins={g.coins}
               locked={false}
               lockText=""
-              onHire={() => g.hireStaff("server", HIRE_COST.server)}
+              onHire={() => g.hireStaff("servers", SERVER_HIRE[g.staff.servers])}
             />
-            <HireRow
+            <RosterRow
               icon="👨‍🍳"
-              name="Chef"
-              desc={`Auto-cooks your MASTERED dishes (one star below your best) — ${WAGE.chef} coins/day wage.`}
-              hired={g.staff.chef}
-              cost={HIRE_COST.chef}
+              name="Chefs"
+              desc={`Cook your MASTERED dishes a star below your best — ${WAGE.chef}/day wage each.`}
+              count={g.staff.chefs}
+              max={MAX_CHEFS}
+              cost={CHEF_HIRE[g.staff.chefs]}
               coins={g.coins}
-              locked={!DISH_ORDER.some((d) => g.mastery[d].mastered)}
-              lockText="Master a dish first"
-              onHire={() => g.hireStaff("chef", HIRE_COST.chef)}
+              locked={
+                g.staff.chefs === 0
+                  ? !DISH_ORDER.some((d) => g.mastery[d].mastered)
+                  : !g.equipment.stove2
+              }
+              lockText={g.staff.chefs === 0 ? "Master a dish first" : "Needs the second stove"}
+              onHire={() => g.hireStaff("chefs", CHEF_HIRE[g.staff.chefs])}
             />
+
+            <div style={S.section}>Equipment</div>
+            {!g.equipment.stove2 && (
+              <OneTimeRow
+                icon="♨️"
+                name="Second Stove"
+                desc="A second back pot — room for another chef to work."
+                cost={EQUIPMENT_COST.stove2}
+                coins={g.coins}
+                onBuy={() => g.buyEquipment("stove2", EQUIPMENT_COST.stove2)}
+              />
+            )}
+            {!g.equipment.bigPot && (
+              <OneTimeRow
+                icon="🍲"
+                name="The Big Pot"
+                desc="Every batch pours 7 servings instead of 5."
+                cost={EQUIPMENT_COST.bigPot}
+                coins={g.coins}
+                onBuy={() => g.buyEquipment("bigPot", EQUIPMENT_COST.bigPot)}
+              />
+            )}
           </>
         )}
 
@@ -128,19 +156,25 @@ export function UpgradeShop() {
   );
 }
 
-function HireRow({ icon, name, desc, hired, cost, coins, locked, lockText, onHire }: {
-  icon: string; name: string; desc: string; hired: boolean; cost: number; coins: number;
-  locked: boolean; lockText: string; onHire: () => void;
+function RosterRow({ icon, name, desc, count, max, cost, coins, locked, lockText, onHire }: {
+  icon: string; name: string; desc: string; count: number; max: number; cost: number;
+  coins: number; locked: boolean; lockText: string; onHire: () => void;
 }) {
+  const full = count >= max;
   return (
     <div style={S.row}>
       <div style={S.icon}>{icon}</div>
       <div style={{ flex: 1 }}>
-        <div style={S.rName}>{name}</div>
-        <div style={S.rDesc}>{locked && !hired ? `🔒 ${lockText}` : desc}</div>
+        <div style={S.rName}>
+          {name}
+          <span style={S.pips}>{Array.from({ length: max }, (_, i) => (
+            <span key={i} style={{ ...S.pip, background: i < count ? C.gold : "rgba(255,220,170,0.18)" }} />
+          ))}</span>
+        </div>
+        <div style={S.rDesc}>{locked && !full ? `🔒 ${lockText}` : desc}</div>
       </div>
-      {hired ? (
-        <div style={S.maxed}>HIRED ✓</div>
+      {full ? (
+        <div style={S.maxed}>FULL</div>
       ) : (
         <Button
           variant={!locked && coins >= cost ? "gold" : "ghost"}
@@ -151,6 +185,28 @@ function HireRow({ icon, name, desc, hired, cost, coins, locked, lockText, onHir
           🪙 {cost}
         </Button>
       )}
+    </div>
+  );
+}
+
+function OneTimeRow({ icon, name, desc, cost, coins, onBuy }: {
+  icon: string; name: string; desc: string; cost: number; coins: number; onBuy: () => void;
+}) {
+  return (
+    <div style={S.row}>
+      <div style={S.icon}>{icon}</div>
+      <div style={{ flex: 1 }}>
+        <div style={S.rName}>{name}</div>
+        <div style={S.rDesc}>{desc}</div>
+      </div>
+      <Button
+        variant={coins >= cost ? "gold" : "ghost"}
+        disabled={coins < cost}
+        onClick={onBuy}
+        style={{ padding: "12px 16px", fontSize: 14 }}
+      >
+        🪙 {cost}
+      </Button>
     </div>
   );
 }

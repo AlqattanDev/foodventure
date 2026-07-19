@@ -50,8 +50,15 @@ export const TABLE_COST = [80, 150, 240, 360];
 export const SERVINGS_PER_BATCH = 5;
 
 export interface Staff {
-  server: boolean;
-  chef: boolean;
+  servers: number;
+  chefs: number;
+}
+
+export interface Equipment {
+  /** second stove — lets a 2nd chef work */
+  stove2: boolean;
+  /** the big pot — batches pour 7 servings instead of 5 */
+  bigPot: boolean;
 }
 
 export interface Upgrades {
@@ -102,8 +109,9 @@ interface GameState {
   tables: number;
   /** the eatery goes live once the first batch reaches the counter */
   opened: boolean;
-  /** hired hands — the server carries plates, the chef cooks mastered dishes */
+  /** the payroll — servers carry plates, chefs cook mastered dishes */
   staff: Staff;
+  equipment: Equipment;
   /** the business: numbered service days with close-out books */
   day: number;
   dayOpen: boolean;
@@ -140,6 +148,9 @@ interface GameState {
   applyLost: () => void;
   buyTable: () => void;
   hireStaff: (kind: keyof Staff, cost: number) => void;
+  buyEquipment: (kind: keyof Equipment, cost: number) => void;
+  /** batch size with the current pot */
+  batchServings: () => number;
   /** chef pot-on: consume the pantry for a dish (runtime already validated) */
   chefConsume: (dish: DishId) => void;
   /** chef batch lands on the counter (the chef's wage is paid at close-out) */
@@ -174,6 +185,7 @@ interface SaveBlob {
   tables: number;
   opened: boolean;
   staff: Staff;
+  equipment: Equipment;
   day: number;
   ledgers: DayLedger[];
   pendingSpend: number;
@@ -204,6 +216,7 @@ function persist(s: GameState) {
       tables: s.tables,
       opened: s.opened,
       staff: s.staff,
+      equipment: s.equipment,
       day: s.day,
       ledgers: s.ledgers,
       pendingSpend: s.pendingSpend,
@@ -216,6 +229,16 @@ function persist(s: GameState) {
 }
 
 const saved = typeof window !== "undefined" ? loadSave() : {};
+
+/** Older saves carried staff as booleans — fold them into counts. */
+function migrateStaff(s: unknown): Staff {
+  if (!s || typeof s !== "object") return { servers: 0, chefs: 0 };
+  const o = s as Record<string, unknown>;
+  if (typeof o.servers === "number" && typeof o.chefs === "number") {
+    return { servers: o.servers, chefs: o.chefs };
+  }
+  return { servers: o.server ? 1 : 0, chefs: o.chef ? 1 : 0 };
+}
 
 export const useGame = create<GameState>((set, get) => ({
   phase: "idle",
@@ -232,7 +255,8 @@ export const useGame = create<GameState>((set, get) => ({
   reputation: saved.reputation ?? 0,
   tables: saved.tables ?? 2,
   opened: saved.opened ?? false,
-  staff: saved.staff ?? { server: false, chef: false },
+  staff: migrateStaff(saved.staff),
+  equipment: saved.equipment ?? { stove2: false, bigPot: false },
   day: saved.day ?? 1,
   dayOpen: false,
   dayTallies: { revenue: 0, ingredientSpend: 0, served: 0, lost: 0 },
@@ -314,7 +338,7 @@ export const useGame = create<GameState>((set, get) => ({
     set((s) => ({
       phase: "idle",
       opened: true,
-      batches: { ...s.batches, [r.dish]: { stars: r.stars, servings: SERVINGS_PER_BATCH } },
+      batches: { ...s.batches, [r.dish]: { stars: r.stars, servings: get().batchServings() } },
     }));
   },
 
@@ -348,15 +372,22 @@ export const useGame = create<GameState>((set, get) => ({
   },
 
   hireStaff: (kind, cost) => {
-    if (get().staff[kind] || get().coins < cost) return;
-    set((s) => ({ coins: s.coins - cost, staff: { ...s.staff, [kind]: true } }));
+    if (get().coins < cost) return;
+    set((s) => ({ coins: s.coins - cost, staff: { ...s.staff, [kind]: s.staff[kind] + 1 } }));
   },
+
+  buyEquipment: (kind, cost) => {
+    if (get().equipment[kind] || get().coins < cost) return;
+    set((s) => ({ coins: s.coins - cost, equipment: { ...s.equipment, [kind]: true } }));
+  },
+
+  batchServings: () => SERVINGS_PER_BATCH + (get().equipment.bigPot ? 2 : 0),
 
   chefConsume: (dish) => set((s) => ({ stock: consume(s.stock, dish) })),
 
   applyChefBatch: (dish, stars) =>
     set((s) => ({
-      batches: { ...s.batches, [dish]: { stars, servings: SERVINGS_PER_BATCH } },
+      batches: { ...s.batches, [dish]: { stars, servings: get().batchServings() } },
     })),
 
   openDay: () => {
@@ -377,7 +408,7 @@ export const useGame = create<GameState>((set, get) => ({
     const { ledger, coinsAfter } = closeOutDay(
       s.day,
       s.dayTallies,
-      { servers: s.staff.server ? 1 : 0, chefs: s.staff.chef ? 1 : 0 },
+      s.staff,
       0,
       s.repStart,
       s.reputation,

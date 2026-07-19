@@ -67,26 +67,30 @@ export function Eatery() {
       {/* the people */}
       {opened && eatery.customers.map((c) => <Person key={c.id} customer={c} />)}
 
-      {/* the hired hands */}
-      <Server />
-      <ChefStation />
+      {/* the hired hands (each renders only once actually hired) */}
+      {[0, 1, 2].map((i) => (
+        <Server key={i} idx={i} />
+      ))}
+      <ChefStation idx={0} position={[-3.1, 0, 1.7]} />
+      <ChefStation idx={1} position={[-3.7, 0, 2.6]} />
     </group>
   );
 }
 
-/** The hired server — teal vest, carries plates counter → table. */
-function Server() {
-  const hired = useGame((s) => s.staff.server);
+/** A hired server — teal vest, carries plates counter → table. */
+function Server({ idx }: { idx: number }) {
+  const hired = useGame((s) => s.staff.servers) > idx;
   const group = useRef<THREE.Group>(null);
   const plate = useRef<THREE.Mesh>(null);
+  const vest = ["#3fb0a4", "#c9803a", "#7c4a63"][idx % 3];
 
   useFrame((state) => {
     const g = group.current;
-    if (!g || !hired) return;
-    const s = staffLive.server;
+    const s = staffLive.servers[idx];
+    if (!g || !hired || !s) return;
     const t = state.clock.elapsedTime;
     g.position.set(s.x, GROUND, s.z);
-    g.rotation.z = s.phase !== "idle" ? Math.sin(t * 11) * 0.06 : 0;
+    g.rotation.z = s.phase !== "idle" ? Math.sin(t * 11 + idx * 2) * 0.06 : 0;
     if (plate.current) plate.current.visible = s.carrying !== null;
   });
 
@@ -95,7 +99,7 @@ function Server() {
     <group ref={group}>
       <mesh position={[0, 0.42, 0]} castShadow>
         <cylinderGeometry args={[0.13, 0.22, 0.84, 12]} />
-        <meshStandardMaterial color="#3fb0a4" roughness={0.85} />
+        <meshStandardMaterial color={vest} roughness={0.85} />
       </mesh>
       <mesh position={[0, 0.98, 0]} castShadow>
         <sphereGeometry args={[0.15, 16, 14]} />
@@ -114,29 +118,29 @@ function Server() {
   );
 }
 
-/** The hired chef's back pot — steams while a batch is on. */
-function ChefStation() {
-  const hired = useGame((s) => s.staff.chef);
+/** A chef's back pot — steams while a batch is on. */
+function ChefStation({ idx, position }: { idx: number; position: [number, number, number] }) {
+  const hired = useGame((s) => s.staff.chefs) > idx;
   const potGlow = useRef<THREE.PointLight>(null);
   const body = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (!hired) return;
-    const cooking = staffLive.chef.cooking !== null;
+    const cooking = staffLive.chefs[idx]?.cooking != null;
     const t = state.clock.elapsedTime;
     if (potGlow.current) {
       potGlow.current.intensity = cooking ? 1.4 + Math.sin(t * 18) * 0.3 : 0.2;
     }
     if (body.current) {
       // stir bob while a pot is on
-      body.current.position.y = GROUND + (cooking ? Math.abs(Math.sin(t * 6)) * 0.05 : 0);
-      body.current.rotation.y = cooking ? Math.sin(t * 3) * 0.15 : 0.4;
+      body.current.position.y = GROUND + (cooking ? Math.abs(Math.sin(t * 6 + idx)) * 0.05 : 0);
+      body.current.rotation.y = cooking ? Math.sin(t * 3 + idx) * 0.15 : 0.4;
     }
   });
 
   if (!hired) return null;
   return (
-    <group position={[-3.1, 0, 1.7]}>
+    <group position={position}>
       {/* mini stove + pot */}
       <mesh position={[0, GROUND + 0.14, 0]} castShadow>
         <cylinderGeometry args={[0.3, 0.34, 0.28, 14]} />

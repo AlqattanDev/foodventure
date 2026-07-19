@@ -23,20 +23,42 @@ import { haptic } from "./haptics";
 
 export const eatery: EateryState = createEatery();
 
+export interface ServerBody {
+  x: number;
+  z: number;
+  phase: "idle" | "toTable" | "returning";
+  targetId: number;
+  carrying: DishId | null;
+}
+
+export interface ChefBody {
+  cooking: DishId | null;
+  t: number;
+}
+
 /** The hired hands' live bodies — positions/pots the 3D floor draws. */
 export const staffLive = {
-  server: {
-    x: 0.8,
-    z: 1.7,
-    phase: "idle" as "idle" | "toTable" | "returning",
-    targetId: 0,
-    carrying: null as DishId | null,
-  },
-  chef: { cooking: null as DishId | null, t: 0 },
+  servers: [] as ServerBody[],
+  chefs: [] as ChefBody[],
 };
 
 const SERVER_HOME = { x: 0.8, z: 1.7 };
 const SERVER_SPEED = 1.9;
+
+function serverHome(idx: number) {
+  return { x: SERVER_HOME.x + idx * 0.55, z: SERVER_HOME.z + (idx % 2) * 0.3 };
+}
+
+/** Keep the live bodies matched to the payroll. */
+function syncStaff(servers: number, chefs: number) {
+  while (staffLive.servers.length < servers) {
+    const h = serverHome(staffLive.servers.length);
+    staffLive.servers.push({ x: h.x, z: h.z, phase: "idle", targetId: 0, carrying: null });
+  }
+  staffLive.servers.length = Math.min(staffLive.servers.length, servers);
+  while (staffLive.chefs.length < chefs) staffLive.chefs.push({ cooking: null, t: 0 });
+  staffLive.chefs.length = Math.min(staffLive.chefs.length, chefs);
+}
 
 /** The service-day clock (not persisted — a reload closes the day out). */
 export const dayLive = { remaining: 0 };
@@ -96,10 +118,13 @@ export function endDay() {
     }
   }
   eatery.customers.length = 0;
-  staffLive.server.phase = "idle";
-  staffLive.server.x = 0.8;
-  staffLive.server.z = 1.7;
-  staffLive.server.carrying = null;
+  staffLive.servers.forEach((s, idx) => {
+    const h = serverHome(idx);
+    s.phase = "idle";
+    s.x = h.x;
+    s.z = h.z;
+    s.carrying = null;
+  });
   emitIfChanged();
   g.closeDay();
 }
@@ -137,15 +162,15 @@ export function runEatery(dt: number) {
     g.applyRep(repDelta(ev));
     if (ev.type === "walked-out") g.applyLost();
   }
-  if (g.staff.server) runServer(dt);
-  if (g.staff.chef) runChef(dt);
+  syncStaff(g.staff.servers, g.staff.chefs);
+  runServers(dt);
+  runChefs(dt);
   emitIfChanged();
 }
 
-/* ---- the hired server: walks plates from the counter to the tables ---- */
+/* ---- the servers: walk plates from the counter to the tables ---- */
 
-function walkServer(tx: number, tz: number, dt: number): boolean {
-  const s = staffLive.server;
+function walkBody(s: ServerBody, tx: number, tz: number, dt: number): boolean {
   const dx = tx - s.x;
   const dz = tz - s.z;
   const d = Math.hypot(dx, dz);
@@ -156,61 +181,74 @@ function walkServer(tx: number, tz: number, dt: number): boolean {
   return d - step < 0.08;
 }
 
-function runServer(dt: number) {
+function runServers(dt: number) {
   const g = useGame.getState();
-  const s = staffLive.server;
-  switch (s.phase) {
-    case "idle": {
-      const target = pickServeTarget(eatery.customers, g.batches);
-      if (target) {
-        s.phase = "toTable";
-        s.targetId = target.id;
-        s.carrying = target.dish;
-      }
-      break;
-    }
-    case "toTable": {
-      const c = eatery.customers.find((c) => c.id === s.targetId);
-      if (!c || c.phase !== "waiting") {
-        // they left or the player already served them — walk the plate back
-        s.phase = "returning";
+  // customers a colleague is already walking to
+  const claimed = new Set(
+    staffLive.servers.filter((s) => s.phase === "toTable").map((s) => s.targetId)
+  );
+  staffLive.servers.forEach((s, idx) => {
+    switch (s.phase) {
+      case "idle": {
+        const target = pickServeTarget(eatery.customers, g.batches, claimed);
+        if (target) {
+          s.phase = "toTable";
+          s.targetId = target.id;
+          s.carrying = target.dish;
+          claimed.add(target.id);
+        }
         break;
       }
-      if (walkServer(c.x, c.z, dt)) {
-        const batch = g.batches[c.dish];
-        if (batch && batch.servings > 0) serveWithMenu(c.id, c.dish, batch.stars);
-        s.phase = "returning";
-        s.carrying = null;
+      case "toTable": {
+        const c = eatery.customers.find((c) => c.id === s.targetId);
+        if (!c || c.phase !== "waiting") {
+          // they left or someone beat us to it — walk the plate back
+          s.phase = "returning";
+          break;
+        }
+        if (walkBody(s, c.x, c.z, dt)) {
+          const batch = g.batches[c.dish];
+          if (batch && batch.servings > 0) serveWithMenu(c.id, c.dish, batch.stars);
+          s.phase = "returning";
+          s.carrying = null;
+        }
+        break;
       }
-      break;
+      case "returning": {
+        s.carrying = null;
+        const h = serverHome(idx);
+        if (walkBody(s, h.x, h.z, dt)) s.phase = "idle";
+        break;
+      }
     }
-    case "returning": {
-      s.carrying = null;
-      if (walkServer(SERVER_HOME.x, SERVER_HOME.z, dt)) s.phase = "idle";
-      break;
-    }
-  }
+  });
 }
 
-/* ---- the hired chef: keeps mastered dishes stocked from the back pot ---- */
+/* ---- the chefs: keep mastered dishes stocked from the back pots ---- */
 
-function runChef(dt: number) {
+function runChefs(dt: number) {
   const g = useGame.getState();
-  const chef = staffLive.chef;
-  if (!chef.cooking) {
-    const dish = pickChefDish(g.mastery, g.batches, g.stock);
-    if (dish) {
-      g.chefConsume(dish);
-      chef.cooking = dish;
+  const beingCooked = new Set(
+    staffLive.chefs.filter((c) => c.cooking).map((c) => c.cooking as DishId)
+  );
+  for (const chef of staffLive.chefs) {
+    if (!chef.cooking) {
+      const dish = pickChefDish(g.mastery, g.batches, g.stock, beingCooked);
+      if (dish) {
+        g.chefConsume(dish);
+        chef.cooking = dish;
+        chef.t = 0;
+        beingCooked.add(dish);
+      }
+      continue;
+    }
+    chef.t += dt;
+    if (chef.t >= CHEF_COOK_SECONDS) {
+      g.applyChefBatch(chef.cooking, chefStars(g.bestStars[chef.cooking]));
+      beingCooked.delete(chef.cooking);
+      chef.cooking = null;
       chef.t = 0;
     }
-    return;
-  }
-  chef.t += dt;
-  if (chef.t >= CHEF_COOK_SECONDS) {
-    g.applyChefBatch(chef.cooking, chefStars(g.bestStars[chef.cooking]));
-    chef.cooking = null;
-    chef.t = 0;
   }
 }
 

@@ -72,3 +72,22 @@ describe("chefStars", () => {
     expect(chefStars(0)).toBe(1);
   });
 });
+
+describe("multi-staff coordination", () => {
+  const noBatches = { classic: null, saffron: null, royal: null };
+
+  it("a chef skips dishes a colleague already has on the stove", () => {
+    const m = mastery({ classic: MASTERED });
+    expect(pickChefDish(m, noBatches, starterStock(), new Set(["classic"]))).toBeNull();
+  });
+
+  it("a server skips customers a colleague is already walking to", () => {
+    const batches = { ...noBatches, classic: { stars: 4, servings: 3 } };
+    const cust = (id: number, patience: number): Customer => ({
+      id, dish: "classic", phase: "waiting", patience, table: 0, x: 0, z: 0,
+      eatT: 0, happy: null, servedAtPatience: 0, starsServed: 0,
+    });
+    const target = pickServeTarget([cust(1, 0.2), cust(2, 0.6)], batches, new Set([1]));
+    expect(target?.id).toBe(2);
+  });
+});
