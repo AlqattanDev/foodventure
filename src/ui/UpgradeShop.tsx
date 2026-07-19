@@ -20,7 +20,7 @@ export function UpgradeShop() {
         <UpgradeRow
           icon="🍯"
           name="Copper Pot"
-          desc="Wider stir rhythm — easier to keep smooth."
+          desc="A thicker base — sticks and scorches slower."
           level={g.upgrades.pot}
           cost={UPGRADE_COST.pot[g.upgrades.pot]}
           coins={g.coins}
@@ -34,6 +34,15 @@ export function UpgradeShop() {
           cost={UPGRADE_COST.stove[g.upgrades.stove]}
           coins={g.coins}
           onBuy={() => g.buyUpgrade("stove")}
+        />
+        <UpgradeRow
+          icon="🗄️"
+          name="Pantry Shelves"
+          desc="More storage for every ingredient (×2, ×3)."
+          level={g.upgrades.shelf}
+          cost={UPGRADE_COST.shelf[g.upgrades.shelf]}
+          coins={g.coins}
+          onBuy={() => g.buyUpgrade("shelf")}
         />
 
         {nextLocked.length > 0 && <div style={S.section}>New Recipes</div>}

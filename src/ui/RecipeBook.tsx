@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { RECIPES } from "../data/recipes";
+import { CONSUMPTION } from "../data/ingredients";
 import { useGame } from "../state/game";
 import { Button } from "./kit";
 import { FONT, pop } from "./theme";
@@ -21,6 +22,10 @@ export function RecipeBook() {
   const recipe = RECIPES[selected];
   const dish = recipe.dish;
   const memory = cookMode === "memory";
+  const stock = useGame((s) => s.stock);
+  const canCookNow = useGame((s) => s.canCookSelected());
+  const openMarket = useGame((s) => s.openMarket);
+  const need = CONSUMPTION[selected];
 
   return (
     <div style={S.backdrop}>
@@ -37,15 +42,25 @@ export function RecipeBook() {
         {/* ingredients */}
         <div style={S.sectionLabel}>Ingredients</div>
         <div style={S.ingredients}>
-          {recipe.ingredients.map((ing) => (
-            <div key={ing.label} style={S.ingRow}>
-              <span style={{ fontSize: 18 }}>{ing.emoji}</span>
-              <span style={S.ingName}>
-                {ing.label} <span style={S.ingArabic}>{ing.arabic}</span>
-              </span>
-              <span style={S.ingAmount}>{ing.amount}</span>
-            </div>
-          ))}
+          {recipe.ingredients.map((ing) => {
+            const needed = ing.id ? need[ing.id] ?? 0 : 0;
+            const have = ing.id ? stock[ing.id] ?? 0 : 0;
+            const short = !!ing.id && have < needed;
+            return (
+              <div key={ing.label} style={S.ingRow}>
+                <span style={{ fontSize: 18 }}>{ing.emoji}</span>
+                <span style={S.ingName}>
+                  {ing.label} <span style={S.ingArabic}>{ing.arabic}</span>
+                </span>
+                {ing.id && (
+                  <span style={{ ...S.pantryChip, color: short ? "#b3402a" : "#5f7d3a" }}>
+                    {short ? `need ${needed}, have ${have}` : `✓ in pantry`}
+                  </span>
+                )}
+                <span style={S.ingAmount}>{ing.amount}</span>
+              </div>
+            );
+          })}
         </div>
 
         {/* method */}
@@ -87,9 +102,15 @@ export function RecipeBook() {
               The book closes when the pot goes on. {mastery.memoryGood}/2 memory runs at 4★+ to master it.
             </div>
           )}
-          <Button variant="gold" onClick={startCook} style={{ width: "100%" }}>
-            {memory ? "I know it — pot on 🧠" : "Put the pot on 🔥"}
-          </Button>
+          {canCookNow ? (
+            <Button variant="gold" onClick={startCook} style={{ width: "100%" }}>
+              {memory ? "I know it — pot on 🧠" : "Put the pot on 🔥"}
+            </Button>
+          ) : (
+            <Button variant="gold" onClick={openMarket} style={{ width: "100%" }}>
+              Shelf is short — to the souq 🧺
+            </Button>
+          )}
           <button style={S.link} onClick={openSelect}>
             back to the menu
           </button>
@@ -155,6 +176,7 @@ const S: Record<string, React.CSSProperties> = {
   ingName: { flex: 1, fontSize: 14.5, fontWeight: 700 },
   ingArabic: { fontSize: 12.5, fontWeight: 600, opacity: 0.65, marginLeft: 4 },
   ingAmount: { fontSize: 13.5, fontWeight: 800, color: "#8a5a22" },
+  pantryChip: { fontSize: 10.5, fontWeight: 800, whiteSpace: "nowrap" },
   steps: { display: "flex", flexDirection: "column", gap: 12 },
   stepRow: { display: "flex", gap: 12, alignItems: "flex-start" },
   stepNum: {

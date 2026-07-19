@@ -9,19 +9,31 @@ import {
   type CookMode,
   type MasteryState,
 } from "../game/mastery";
+import {
+  starterStock,
+  canCook,
+  consume,
+  buy,
+  ummKhalidLends,
+  type Stock,
+  type IngredientId,
+} from "../game/pantry";
 
-export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "sell" | "shop";
+export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "sell" | "shop" | "market";
 
 export interface Upgrades {
-  /** 0..2 — wider stir tolerance, slower burn */
+  /** 0..2 — slower burn (a thicker pot forgives) */
   pot: number;
   /** 0..2 — finer heat, more forgiving cook */
   stove: number;
+  /** 0..2 — pantry shelf capacity ×2, ×3 */
+  shelf: number;
 }
 
 export const UPGRADE_COST = {
   pot: [120, 260],
   stove: [140, 300],
+  shelf: [100, 220],
 };
 
 export interface CookResult {
@@ -45,12 +57,15 @@ interface GameState {
   /** how the current/next cook runs — guided (book + hints) or from memory */
   cookMode: CookMode;
   upgrades: Upgrades;
+  /** the pantry — every cook consumes real stock */
+  stock: Stock;
   result: CookResult | null;
 
   // derived helpers
   burnResist: () => number; // burn slowdown from upgrades
   sellBonus: () => number; // price bump from... (reserved, currently 0)
   canUnlock: (id: DishId) => boolean;
+  canCookSelected: () => boolean;
   memoryAvailable: (id: DishId) => boolean;
   setCookMode: (m: CookMode) => void;
 
@@ -62,20 +77,64 @@ interface GameState {
   finishRun: (rating: RunRating) => void;
   sell: () => void;
   openShop: () => void;
-  buyUpgrade: (kind: "pot" | "stove") => void;
+  openMarket: () => void;
+  buyIngredient: (id: IngredientId, qty: number) => void;
+  buyUpgrade: (kind: keyof Upgrades) => void;
   buyUnlock: (id: DishId) => void;
   toIdle: () => void;
 }
 
+/* ---------------- persistence ---------------- */
+
+const SAVE_KEY = "foodventure-save-v3";
+
+interface SaveBlob {
+  coins: number;
+  unlocked: Record<DishId, boolean>;
+  bestStars: Record<DishId, number>;
+  mastery: Record<DishId, MasteryState>;
+  upgrades: Upgrades;
+  stock: Stock;
+}
+
+function loadSave(): Partial<SaveBlob> {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw) as SaveBlob;
+  } catch {
+    return {};
+  }
+}
+
+function persist(s: GameState) {
+  try {
+    const blob: SaveBlob = {
+      coins: s.coins,
+      unlocked: s.unlocked,
+      bestStars: s.bestStars,
+      mastery: s.mastery,
+      upgrades: s.upgrades,
+      stock: s.stock,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(blob));
+  } catch {
+    /* storage full/blocked — the game still plays */
+  }
+}
+
+const saved = typeof window !== "undefined" ? loadSave() : {};
+
 export const useGame = create<GameState>((set, get) => ({
   phase: "idle",
-  coins: 60,
+  coins: saved.coins ?? 60,
   selected: "classic",
-  unlocked: { classic: true, saffron: false, royal: false },
-  bestStars: { classic: 0, saffron: 0, royal: 0 },
-  mastery: { classic: FRESH_MASTERY, saffron: FRESH_MASTERY, royal: FRESH_MASTERY },
+  unlocked: saved.unlocked ?? { classic: true, saffron: false, royal: false },
+  bestStars: saved.bestStars ?? { classic: 0, saffron: 0, royal: 0 },
+  mastery: saved.mastery ?? { classic: FRESH_MASTERY, saffron: FRESH_MASTERY, royal: FRESH_MASTERY },
   cookMode: "guided",
-  upgrades: { pot: 0, stove: 0 },
+  upgrades: saved.upgrades ?? { pot: 0, stove: 0, shelf: 0 },
+  stock: saved.stock ?? starterStock(),
   result: null,
 
   burnResist: () => get().upgrades.pot * 0.12 + get().upgrades.stove * 0.14,
@@ -93,7 +152,13 @@ export const useGame = create<GameState>((set, get) => ({
     );
   },
 
-  openSelect: () => set({ phase: "select" }),
+  canCookSelected: () => canCook(get().stock, get().selected),
+
+  openSelect: () => {
+    // the neighbour rule: never let the game softlock on an empty shelf
+    const lent = ummKhalidLends(get().stock, get().coins, get().unlocked);
+    set({ phase: "select", ...(lent ? { stock: lent } : {}) });
+  },
   select: (id) => {
     if (!get().unlocked[id]) return;
     set({ selected: id, phase: "select" });
@@ -102,7 +167,12 @@ export const useGame = create<GameState>((set, get) => ({
   setCookMode: (m) => set({ cookMode: m }),
 
   openBook: () => set({ phase: "book", result: null, cookMode: "guided" }),
-  startCook: () => set({ phase: "cook", result: null }),
+
+  startCook: () => {
+    // pot-on consumes the shelf — a burnt batch still cost real ingredients
+    if (!canCook(get().stock, get().selected)) return;
+    set((s) => ({ phase: "cook", result: null, stock: consume(s.stock, s.selected) }));
+  },
 
   finishRun: (rating) => {
     const dish = get().selected;
@@ -136,6 +206,13 @@ export const useGame = create<GameState>((set, get) => ({
   },
 
   openShop: () => set({ phase: "shop" }),
+  openMarket: () => set({ phase: "market" }),
+
+  buyIngredient: (id, qty) => {
+    const r = buy(get().stock, id, qty, get().coins, get().upgrades.shelf);
+    if (r.bought === 0) return;
+    set({ stock: r.stock, coins: r.coins });
+  },
 
   buyUpgrade: (kind) => {
     const lvl = get().upgrades[kind];
@@ -160,6 +237,10 @@ export const useGame = create<GameState>((set, get) => ({
 
   toIdle: () => set({ phase: "idle" }),
 }));
+
+if (typeof window !== "undefined") {
+  useGame.subscribe((s) => persist(s));
+}
 
 // dev-only handle for quick manual/automated verification in the browser
 if ((import.meta as any).env?.DEV && typeof window !== "undefined") {

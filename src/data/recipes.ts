@@ -9,12 +9,15 @@
  */
 import { DISHES, type Dish, type DishId } from "./dishes";
 import type { RecipeStep } from "../game/recipe";
+import type { IngredientId } from "./ingredients";
 
 export interface CookbookIngredient {
   label: string;
   arabic: string;
   emoji: string;
   amount: string;
+  /** pantry id — water has none, nobody stocks water */
+  id?: IngredientId;
 }
 
 export interface Recipe {
@@ -26,14 +29,14 @@ export interface Recipe {
   steps: RecipeStep[];
 }
 
-const STARCH: CookbookIngredient = { label: "Cornstarch", arabic: "نشا", emoji: "🌾", amount: "1 cup" };
-const SUGAR: CookbookIngredient = { label: "Sugar", arabic: "سكر", emoji: "🍬", amount: "3 cups" };
+const STARCH: CookbookIngredient = { id: "starch", label: "Cornstarch", arabic: "نشا", emoji: "🌾", amount: "1 cup" };
+const SUGAR: CookbookIngredient = { id: "sugar", label: "Sugar", arabic: "سكر", emoji: "🍬", amount: "3 cups" };
 const WATER: CookbookIngredient = { label: "Water", arabic: "ماء", emoji: "💧", amount: "5 cups" };
-const GHEE: CookbookIngredient = { label: "Ghee", arabic: "سمن", emoji: "🧈", amount: "¾ cup" };
-const CARDAMOM: CookbookIngredient = { label: "Ground cardamom", arabic: "هيل", emoji: "🫛", amount: "1 tsp" };
-const SAFFRON: CookbookIngredient = { label: "Saffron threads", arabic: "زعفران", emoji: "🌸", amount: "a generous pinch" };
-const ROSE: CookbookIngredient = { label: "Rose water", arabic: "ماء ورد", emoji: "🌹", amount: "2 tbsp" };
-const NUTS: CookbookIngredient = { label: "Almonds & pistachios", arabic: "لوز وفستق", emoji: "🥜", amount: "½ cup, slivered" };
+const GHEE: CookbookIngredient = { id: "ghee", label: "Ghee", arabic: "سمن", emoji: "🧈", amount: "¾ cup" };
+const CARDAMOM: CookbookIngredient = { id: "cardamom", label: "Ground cardamom", arabic: "هيل", emoji: "🫛", amount: "1 tsp" };
+const SAFFRON: CookbookIngredient = { id: "saffron", label: "Saffron threads", arabic: "زعفران", emoji: "🌸", amount: "a generous pinch" };
+const ROSE: CookbookIngredient = { id: "rose", label: "Rose water", arabic: "ماء ورد", emoji: "🌹", amount: "2 tbsp" };
+const NUTS: CookbookIngredient = { id: "nuts", label: "Almonds & pistachios", arabic: "لوز وفستق", emoji: "🥜", amount: "½ cup, slivered" };
 
 /** Shared skeleton — variations tighten windows and add their own touches. */
 function halwaSteps(opts: {

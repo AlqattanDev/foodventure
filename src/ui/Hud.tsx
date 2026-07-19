@@ -15,6 +15,7 @@ export function Hud() {
   const selected = useGame((s) => s.selected);
   const bestStars = useGame((s) => s.bestStars[selected]);
   const openSelect = useGame((s) => s.openSelect);
+  const openMarket = useGame((s) => s.openMarket);
   const dish = DISHES[selected];
 
   const showTop = phase === "idle" || phase === "select" || phase === "shop";
@@ -36,7 +37,9 @@ export function Hud() {
               <div style={S.dish}>{dish.name}</div>
               <Stars value={bestStars} size={13} />
             </div>
-            <div style={{ width: 74 }} />
+            <button style={S.souqBtn} onClick={openMarket}>
+              🧺 Souq
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -89,6 +92,20 @@ const S: Record<string, React.CSSProperties> = {
     textAlign: "center",
   },
   center: { display: "flex", flexDirection: "column", alignItems: "center", gap: 4 },
+  souqBtn: {
+    pointerEvents: "auto",
+    background: "rgba(40,20,10,0.55)",
+    backdropFilter: "blur(8px)",
+    padding: "8px 12px",
+    borderRadius: 999,
+    fontWeight: 800,
+    fontSize: 13.5,
+    border: `1px solid ${C.glassBorder}`,
+    color: C.cream,
+    fontFamily: FONT,
+    cursor: "pointer",
+    minWidth: 74,
+  },
   dish: { fontSize: 15, fontWeight: 700, textShadow: "0 2px 8px rgba(0,0,0,0.6)" },
   bottom: {
     position: "absolute",
