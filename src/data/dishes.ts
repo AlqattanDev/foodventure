@@ -33,7 +33,7 @@ export interface Dish {
   blurb: string;
   /** base sell price at 3 stars */
   basePrice: number;
-  /** cook difficulty 1..3 — scales tempo band tightness & burn speed */
+  /** cook difficulty 1..3 — shown as 🌶️ on the dish card */
   difficulty: number;
   /** raw dough tint and finished glossy tint for the 3D halwa */
   rawColor: string;

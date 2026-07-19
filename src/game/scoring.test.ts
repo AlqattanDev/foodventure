@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { scorePour, tempoQuality, idealTempo, priceFor } from "./scoring";
+import { scorePour, priceFor } from "./scoring";
 import { DISHES } from "../data/dishes";
 
 const classic = DISHES.classic;
@@ -20,21 +20,6 @@ describe("scorePour", () => {
     const cardamom = classic.ingredients[3];
     expect(scorePour(cardamom, 1)).toBe(0);
     expect(scorePour(ing, 0)).toBeGreaterThanOrEqual(0);
-  });
-});
-
-describe("tempoQuality", () => {
-  it("peaks at the ideal tempo center", () => {
-    const { center } = idealTempo(classic);
-    expect(tempoQuality(classic, center)).toBeGreaterThan(0.99);
-  });
-  it("a bandBonus widens the forgiving zone", () => {
-    const { center, band } = idealTempo(classic);
-    const off = center + band + 0.5; // just outside the base band
-    expect(tempoQuality(classic, off, 0)).toBeLessThan(tempoQuality(classic, off, 1.5));
-  });
-  it("harder dishes have a tighter band", () => {
-    expect(idealTempo(DISHES.royal).band).toBeLessThan(idealTempo(classic).band);
   });
 });
 

@@ -48,7 +48,6 @@ interface GameState {
   result: CookResult | null;
 
   // derived helpers
-  potTolerance: () => number; // extra stir band from pot upgrade
   burnResist: () => number; // burn slowdown from upgrades
   sellBonus: () => number; // price bump from... (reserved, currently 0)
   canUnlock: (id: DishId) => boolean;
@@ -79,7 +78,6 @@ export const useGame = create<GameState>((set, get) => ({
   upgrades: { pot: 0, stove: 0 },
   result: null,
 
-  potTolerance: () => get().upgrades.pot * 0.05,
   burnResist: () => get().upgrades.pot * 0.12 + get().upgrades.stove * 0.14,
   sellBonus: () => 0,
 

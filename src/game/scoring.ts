@@ -16,27 +16,6 @@ export function scorePour(ing: Ingredient, amount: number): number {
   return Math.max(0, 0.8 - over * 0.8);
 }
 
-/** Ideal stir tempo (radians/sec of wrist circling) for a dish's difficulty. */
-export function idealTempo(dish: Dish): { center: number; band: number } {
-  // harder dishes want a faster, tighter rhythm
-  const center = 5.5 + dish.difficulty * 0.6;
-  const band = 3.4 - dish.difficulty * 0.5; // tighter band when harder
-  return { center, band };
-}
-
-/**
- * How "on-rhythm" an instantaneous stir speed is, 0..1.
- * `bandBonus` widens the forgiving band (the "better pot" upgrade).
- */
-export function tempoQuality(dish: Dish, speed: number, bandBonus = 0): number {
-  const { center } = idealTempo(dish);
-  const band = idealTempo(dish).band + bandBonus;
-  const d = Math.abs(speed - center);
-  if (d <= band) return 1 - (d / band) * 0.4; // 1.0 dead-center → 0.6 at edge
-  const over = (d - band) / band;
-  return Math.max(0, 0.6 - over * 0.6);
-}
-
 /** Coins earned selling a dish at a given star count, with upgrade bonuses. */
 export function priceFor(dish: Dish, stars: number, sellBonus = 0): number {
   if (stars <= 0) return 0; // burnt batch = waste, no sale

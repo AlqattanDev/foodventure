@@ -46,14 +46,28 @@ function halwaSteps(opts: {
 }): RecipeStep[] {
   return [
     {
+      id: "base",
+      kind: "pour-stir",
+      title: "The syrup base",
+      instruction: "Measure the sugar and water into the pot — fill each to the line.",
+      edu: opts.saffronInSyrup
+        ? "Everything starts with sugar and water in the pot — and the saffron threads dropped in now, so they bloom as it heats and stain the whole syrup gold. Measure honestly: halwa is a ratio before it is anything else."
+        : "Everything starts with sugar and water in the pot. Measure honestly — halwa is a ratio before it is anything else; too much water and it never sets, too little and it candies.",
+      tip: "Pour to the line. A dribble too far can be spooned back out.",
+      pours: [
+        { key: "sugar", label: "Sugar", emoji: "🍬", color: "#f2ead6", amount: "3 cups", target: 0.7, tolerance: 0.12 },
+        { key: "syrupwater", label: "Water", emoji: "💧", color: "#bcd8e8", amount: "5 cups", target: 0.75, tolerance: 0.12 },
+      ],
+      smoothSeconds: 2,
+      weight: 0.75,
+    },
+    {
       id: "syrup",
       kind: "heat-hold",
-      title: "The syrup",
-      instruction: "Raise the heat until the syrup simmers, then hold it there.",
-      edu: opts.saffronInSyrup
-        ? "Sugar and water go on first — with the saffron dropped in to bloom, staining the syrup gold. Bring it to a gentle simmer; boiling it hard darkens the sugar before the halwa even begins."
-        : "Sugar and water go on first. Bring them to a gentle simmer — bubbles at the edge, not a rolling boil. Rushing the syrup darkens the sugar before the halwa even begins.",
-      tip: "Simmer, not boil — watch for small bubbles at the rim.",
+      title: "The simmer",
+      instruction: "Open the gas and watch the rim — small beads mean simmer. Hold it there.",
+      edu: "Bring the syrup to a gentle simmer — bubbles beading at the rim, not a rolling boil. Rushing the syrup darkens the sugar before the halwa even begins. There is no thermometer: the bubbles are the thermometer.",
+      tip: "Beads at the rim = simmer. A rolling surface = too hot, ease the knob.",
       band: [0.45, 0.7],
       holdSeconds: opts.holdSeconds,
     },
