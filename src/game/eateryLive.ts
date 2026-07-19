@@ -7,13 +7,13 @@
  * Pause rule (Ali's): only a PRACTICE cook stops the world. Service cooks,
  * menus and the market all run live — that pressure is the game.
  */
-import { DISHES, type DishId } from "../data/dishes";
+import { DISHES, DISH_ORDER, type DishId } from "../data/dishes";
 import { useGame } from "../state/game";
+import { payFor, orderAppeal, valueVerdict, valueRep } from "./menu";
 import {
   createEatery,
   tickEatery,
   serveCustomer,
-  tipFor,
   repDelta,
   type EateryState,
 } from "./eatery";
@@ -126,7 +126,11 @@ export function runEatery(dt: number) {
   const events = tickEatery(eatery, dt, {
     reputation: g.reputation,
     tables: g.tables,
-    unlocked: (Object.keys(g.unlocked) as (keyof typeof g.unlocked)[]).filter((d) => g.unlocked[d]),
+    // the board: unlocked + switched on, weighted by appetite × price appeal
+    menu: DISH_ORDER.filter((d) => g.unlocked[d] && g.menu[d].on).map((d) => ({
+      dish: d,
+      weight: (d === "classic" ? 1.3 : 1) * orderAppeal(g.menu[d].priceMult),
+    })),
     rand: Math.random,
   });
   for (const ev of events) {
@@ -174,10 +178,7 @@ function runServer(dt: number) {
       }
       if (walkServer(c.x, c.z, dt)) {
         const batch = g.batches[c.dish];
-        if (batch && batch.servings > 0) {
-          serveCustomer(eatery, c.id, batch.stars);
-          g.applyServe(c.dish, tipFor(DISHES[c.dish].basePrice, batch.stars, c.servedAtPatience));
-        }
+        if (batch && batch.servings > 0) serveWithMenu(c.id, c.dish, batch.stars);
         s.phase = "returning";
         s.carrying = null;
       }
@@ -213,7 +214,21 @@ function runChef(dt: number) {
   }
 }
 
-/** Serve a waiting customer from the counter. */
+/** The one serve path: menu price + freshness tip, value verdict → rep. */
+function serveWithMenu(customerId: number, dish: DishId, stars: number) {
+  const g = useGame.getState();
+  const c = eatery.customers.find((c) => c.id === customerId);
+  if (!c) return;
+  const mult = g.menu[dish].priceMult;
+  const verdict = valueVerdict(stars, mult);
+  const happy = verdict !== "ripped" && stars >= 3 && c.patience > 0.25;
+  serveCustomer(eatery, customerId, stars, happy);
+  const pay = payFor(DISHES[dish].basePrice, stars, mult, c.servedAtPatience);
+  g.applyServe(dish, pay.total);
+  g.applyRep(valueRep(verdict));
+}
+
+/** Serve a waiting customer from the counter (the player's tap). */
 export function tryServe(customerId: number): boolean {
   const g = useGame.getState();
   const c = eatery.customers.find((c) => c.id === customerId);
@@ -223,8 +238,7 @@ export function tryServe(customerId: number): boolean {
     haptic("error");
     return false;
   }
-  serveCustomer(eatery, customerId, batch.stars);
-  g.applyServe(c.dish, tipFor(DISHES[c.dish].basePrice, batch.stars, c.servedAtPatience));
+  serveWithMenu(customerId, c.dish, batch.stars);
   haptic("success");
   emitIfChanged();
   return true;

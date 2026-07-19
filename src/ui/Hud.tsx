@@ -18,6 +18,7 @@ export function Hud() {
   const bestStars = useGame((s) => s.bestStars[selected]);
   const openSelect = useGame((s) => s.openSelect);
   const openMarket = useGame((s) => s.openMarket);
+  const openMenu = useGame((s) => s.openMenu);
   const dish = DISHES[selected];
 
   const showTop = phase === "idle" || phase === "select" || phase === "shop";
@@ -39,9 +40,14 @@ export function Hud() {
               <div style={S.dish}>{dish.name}</div>
               <Stars value={bestStars} size={13} />
             </div>
-            <button style={S.souqBtn} onClick={openMarket}>
-              🧺 Souq
-            </button>
+            <div style={S.topBtns}>
+              <button style={S.souqBtn} onClick={openMarket}>
+                🧺 Souq
+              </button>
+              <button style={S.souqBtn} onClick={openMenu}>
+                📋 Menu
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -141,6 +147,7 @@ const S: Record<string, React.CSSProperties> = {
     textAlign: "center",
   },
   center: { display: "flex", flexDirection: "column", alignItems: "center", gap: 4 },
+  topBtns: { display: "flex", flexDirection: "column", gap: 6, alignItems: "stretch" },
   souqBtn: {
     pointerEvents: "auto",
     background: "rgba(40,20,10,0.55)",

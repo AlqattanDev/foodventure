@@ -4,7 +4,6 @@ import {
   tickEatery,
   serveCustomer,
   spawnInterval,
-  tipFor,
   repDelta,
   TABLE_SPOTS,
   type TickCtx,
@@ -16,7 +15,7 @@ const DT = 1 / 30;
 const ctx = (over: Partial<TickCtx> = {}): TickCtx => ({
   reputation: 0,
   tables: 2,
-  unlocked: ["classic"],
+  menu: [{ dish: "classic", weight: 1 }],
   rand: () => 0.5,
   ...over,
 });
@@ -97,10 +96,13 @@ describe("serving", () => {
   });
 });
 
-describe("tips", () => {
-  it("scale with stars and remaining patience", () => {
-    expect(tipFor(30, 5, 1)).toBeGreaterThan(tipFor(30, 3, 1));
-    expect(tipFor(30, 4, 1)).toBeGreaterThan(tipFor(30, 4, 0.1));
-    expect(tipFor(30, 1, 0)).toBeGreaterThanOrEqual(1);
+describe("explicit happiness override", () => {
+  it("the caller's value verdict wins over the default", () => {
+    const s = createEatery();
+    run(s, 12);
+    const c = s.customers[0];
+    // 5★ food served fresh, but the caller says they felt ripped off
+    expect(serveCustomer(s, c.id, 5, false)).toBe(true);
+    expect(c.happy).toBe(false);
   });
 });

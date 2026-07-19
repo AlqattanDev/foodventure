@@ -72,13 +72,19 @@ export type EateryEvent =
   | { type: "finished"; happy: boolean } // ate and left
   | { type: "walked-out" }; // patience died — reputation hit
 
+export interface MenuOffer {
+  dish: DishId;
+  /** relative order likelihood (appetite × price appeal) */
+  weight: number;
+}
+
 export interface TickCtx {
   /** 0..5 — drives how often people show up */
   reputation: number;
   /** how many tables are owned (indexes into TABLE_SPOTS) */
   tables: number;
-  /** dishes on the visible menu */
-  unlocked: DishId[];
+  /** what's on the board today, with demand weights */
+  menu: MenuOffer[];
   rand: () => number;
 }
 
@@ -91,10 +97,14 @@ export function spawnInterval(reputation: number, rand: () => number): number {
   return base * (0.75 + rand() * 0.5);
 }
 
-function pickDish(unlocked: DishId[], rand: () => number): DishId {
-  // the classic is everyone's default; fancier orders come with the menu
-  if (unlocked.length === 1 || rand() < 0.5) return unlocked[0];
-  return unlocked[Math.floor(rand() * unlocked.length)];
+function pickDish(menu: MenuOffer[], rand: () => number): DishId {
+  const total = menu.reduce((a, m) => a + m.weight, 0);
+  let r = rand() * total;
+  for (const m of menu) {
+    r -= m.weight;
+    if (r <= 0) return m.dish;
+  }
+  return menu[menu.length - 1].dish;
 }
 
 function walkToward(c: Customer, target: Spot, dt: number): boolean {
@@ -132,10 +142,10 @@ export function tickEatery(s: EateryState, dt: number, ctx: TickCtx): EateryEven
   const queueLen = s.customers.filter((c) => c.phase === "arriving" || c.phase === "queueing").length;
   s.spawnT -= dt;
   if (s.spawnT <= 0) {
-    if (queueLen < MAX_QUEUE && ctx.unlocked.length > 0) {
+    if (queueLen < MAX_QUEUE && ctx.menu.length > 0) {
       s.customers.push({
         id: s.nextId++,
-        dish: pickDish(ctx.unlocked, ctx.rand),
+        dish: pickDish(ctx.menu, ctx.rand),
         phase: "arriving",
         patience: 1,
         table: -1,
@@ -221,21 +231,22 @@ export function tickEatery(s: EateryState, dt: number, ctx: TickCtx): EateryEven
  * caller checks + decrements the batch and pays out the tip.
  * Returns false if they can't be served right now.
  */
-export function serveCustomer(s: EateryState, id: number, stars: number): boolean {
+export function serveCustomer(
+  s: EateryState,
+  id: number,
+  stars: number,
+  happy?: boolean
+): boolean {
   const c = s.customers.find((c) => c.id === id);
   if (!c || c.phase !== "waiting") return false;
   c.phase = "eating";
   c.eatT = 0;
   c.servedAtPatience = Math.max(0, c.patience);
   c.starsServed = stars;
-  c.happy = stars >= 3 && c.patience > 0.25;
+  // caller may fold in the value-for-money verdict (menu.ts); default is
+  // quality + a reasonably fresh wait
+  c.happy = happy ?? (stars >= 3 && c.patience > 0.25);
   return true;
-}
-
-/** The tip a serving earns: dish quality × how fresh their patience still is. */
-export function tipFor(basePrice: number, stars: number, patience: number): number {
-  const starMult = [0, 0.5, 0.75, 1, 1.35, 1.8][stars] ?? 1;
-  return Math.max(1, Math.round(basePrice * starMult * (0.2 + 0.25 * patience)));
 }
 
 /** Reputation nudge when a customer resolves. */
