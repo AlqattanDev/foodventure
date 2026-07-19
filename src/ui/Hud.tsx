@@ -19,6 +19,8 @@ export function Hud() {
   const openSelect = useGame((s) => s.openSelect);
   const openMarket = useGame((s) => s.openMarket);
   const openMenu = useGame((s) => s.openMenu);
+  const openBusiness = useGame((s) => s.openBusiness);
+  const opened = useGame((s) => s.opened);
   const dish = DISHES[selected];
 
   const showTop = phase === "idle" || phase === "select" || phase === "shop";
@@ -47,6 +49,11 @@ export function Hud() {
               <button style={S.souqBtn} onClick={openMenu}>
                 📋 Menu
               </button>
+              {opened && (
+                <button style={S.souqBtn} onClick={openBusiness}>
+                  📈 Books
+                </button>
+              )}
             </div>
           </motion.div>
         )}

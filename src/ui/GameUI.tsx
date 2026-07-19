@@ -9,6 +9,7 @@ import { UpgradeShop } from "./UpgradeShop";
 import { Market } from "./Market";
 import { LedgerCard } from "./LedgerCard";
 import { MenuBoard } from "./MenuBoard";
+import { BusinessPanel } from "./BusinessPanel";
 import { ServeTray, EateryController } from "./ServeTray";
 
 /** All 2D game UI. Sits above the 3D canvas and switches on the game phase. */
@@ -28,6 +29,7 @@ export function GameUI() {
         {phase === "market" && <Market key="market" />}
         {phase === "ledger" && <LedgerCard key="ledger" />}
         {phase === "menu" && <MenuBoard key="menu" />}
+        {phase === "business" && <BusinessPanel key="business" />}
       </AnimatePresence>
     </>
   );

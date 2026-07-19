@@ -35,7 +35,8 @@ export type Phase =
   | "shop"
   | "market"
   | "ledger"
-  | "menu";
+  | "menu"
+  | "business";
 
 /** Why the pot went on: a batch for the counter, or a paused practice run. */
 export type CookPurpose = "service" | "practice";
@@ -127,6 +128,10 @@ interface GameState {
   ledgers: DayLedger[];
   /** the menu board: what's on and at what price */
   menu: Menu;
+  /** all-time business stats + claimed milestone rewards */
+  lifetimeServed: number;
+  bestDayNet: number;
+  claimed: string[];
   result: CookResult | null;
 
   // derived helpers
@@ -167,6 +172,8 @@ interface GameState {
   openMenu: () => void;
   setMenuPrice: (dish: DishId, mult: number) => void;
   toggleMenuDish: (dish: DishId) => void;
+  openBusiness: () => void;
+  claimMilestone: (id: string, reward: number) => void;
   openShop: () => void;
   openMarket: () => void;
   buyIngredient: (id: IngredientId, qty: number) => void;
@@ -197,6 +204,9 @@ interface SaveBlob {
   ledgers: DayLedger[];
   pendingSpend: number;
   menu: Menu;
+  lifetimeServed: number;
+  bestDayNet: number;
+  claimed: string[];
 }
 
 function loadSave(): Partial<SaveBlob> {
@@ -229,6 +239,9 @@ function persist(s: GameState) {
       ledgers: s.ledgers,
       pendingSpend: s.pendingSpend,
       menu: s.menu,
+      lifetimeServed: s.lifetimeServed,
+      bestDayNet: s.bestDayNet,
+      claimed: s.claimed,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(blob));
   } catch {
@@ -273,6 +286,9 @@ export const useGame = create<GameState>((set, get) => ({
   repStart: 0,
   ledgers: saved.ledgers ?? [],
   menu: saved.menu ?? defaultMenu(),
+  lifetimeServed: saved.lifetimeServed ?? 0,
+  bestDayNet: saved.bestDayNet ?? 0,
+  claimed: saved.claimed ?? [],
   result: null,
 
   burnResist: () => get().upgrades.pot * 0.12 + get().upgrades.stove * 0.14,
@@ -363,6 +379,7 @@ export const useGame = create<GameState>((set, get) => ({
         revenue: s.dayTallies.revenue + tip,
         served: s.dayTallies.served + 1,
       },
+      lifetimeServed: s.lifetimeServed + 1,
     }));
   },
 
@@ -436,6 +453,7 @@ export const useGame = create<GameState>((set, get) => ({
       coins: coinsAfter,
       ledgers: [...st.ledgers, ledger].slice(-LEDGER_HISTORY),
       dayTallies: { revenue: 0, ingredientSpend: 0, served: 0, lost: 0 },
+      bestDayNet: Math.max(st.bestDayNet, ledger.net),
       phase: "ledger",
     }));
   },
@@ -453,6 +471,13 @@ export const useGame = create<GameState>((set, get) => ({
     set((s) => ({
       menu: { ...s.menu, [dish]: { ...s.menu[dish], on: !s.menu[dish].on } },
     })),
+
+  openBusiness: () => set({ phase: "business" }),
+
+  claimMilestone: (id, reward) => {
+    if (get().claimed.includes(id)) return;
+    set((s) => ({ claimed: [...s.claimed, id], coins: s.coins + reward }));
+  },
 
   buyIngredient: (id, qty) => {
     const r = buy(get().stock, id, qty, get().coins, get().upgrades.shelf);
