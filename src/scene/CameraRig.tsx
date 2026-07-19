@@ -22,6 +22,7 @@ const SHOTS: Record<Phase, Shot> = {
   rating: { pos: [0, 4.2, 8.4], target: [-0.2, 1.15, 0.3] },
   shop: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
   market: { pos: [0, 4.6, 9.4], target: [0, 1.2, 0.0] },
+  ledger: { pos: [0, 6.6, 12.6], target: [0, 0.5, 1.6] },
 };
 
 export function CameraRig() {

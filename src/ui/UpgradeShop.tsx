@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { DISHES, DISH_ORDER } from "../data/dishes";
 import { useGame, UPGRADE_COST, TABLE_COST } from "../state/game";
-import { HIRE_COST, SERVER_TIP_CUT, CHEF_FEE } from "../game/staff";
+import { HIRE_COST } from "../game/staff";
+import { WAGE } from "../game/ledger";
 import { Button, Coin } from "./kit";
 import { C, FONT, pop } from "./theme";
 
@@ -74,7 +75,7 @@ export function UpgradeShop() {
             <HireRow
               icon="🤵"
               name="Server"
-              desc={`Carries plates to the tables for you — keeps ${Math.round(SERVER_TIP_CUT * 100)}% of each tip.`}
+              desc={`Carries plates to the tables for you — ${WAGE.server} coins/day wage.`}
               hired={g.staff.server}
               cost={HIRE_COST.server}
               coins={g.coins}
@@ -85,7 +86,7 @@ export function UpgradeShop() {
             <HireRow
               icon="👨‍🍳"
               name="Chef"
-              desc={`Auto-cooks your MASTERED dishes (one star below your best) — ${CHEF_FEE} coins a batch.`}
+              desc={`Auto-cooks your MASTERED dishes (one star below your best) — ${WAGE.chef} coins/day wage.`}
               hired={g.staff.chef}
               cost={HIRE_COST.chef}
               coins={g.coins}

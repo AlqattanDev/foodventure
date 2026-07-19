@@ -49,13 +49,34 @@ Recipe engine keeps its stage/summary/scorer shape; summaries change inputs: sti
 - Cookbook page shows have/need per ingredient; cook button blocked without stock.
 - **Persistence**: full game state to localStorage (mandatory now the economy is real).
 
-## Milestones — ALL BUILT (V3 M1–M6 on main, 2026-07-19)
+## V3 milestones M1–M6: BUILT (on main, 2026-07-19). See STATUS.md.
 
-All six milestones are committed and pushed; see STATUS.md for the current
-state and file map. What remains is not build work:
+## Part D — The REAL tycoon layer (Ali, 2026-07-19: "it's not a tycoon, I want real tycoon experience")
 
-1. **Ali plays it** — the cook feel and the floor need his verdict before
-   anything else (that was the whole point of V3).
-2. Balance pass from real play (tips / ingredient prices / staff cuts).
-3. Final art & juice pass on top of validated gameplay.
-4. On-device Capacitor run (multi-touch combine + haptics).
+The M4/M5 floor was service-sim-lite: an always-on trickle, invisible wages,
+no business decisions. The tycoon loop that replaces it:
+
+**prep → open the stall (timed service day, world runs hot) → close →
+LEDGER (revenue − ingredients − wages − rent = net) → reinvest → repeat.**
+
+- **Day cycle (T1):** the world only runs while the stall is OPEN (~3 min
+  day, close early allowed; practice cooks still pause, service cooks
+  mid-day keep it running). Close-out pays per-day wages + rent and shows
+  the P&L ledger card. Ingredient buys attribute to the day's costs
+  (pending spend rolls into the next day if bought while closed).
+- **Menu & pricing (T2):** per-dish price multiplier (0.6x–1.6x) + on/off
+  menu toggles. Demand model: overpriced vs batch stars → fewer orders +
+  unhappy serves; underpriced → crowds but thin margins.
+- **Staff roster (T3):** up to 3 servers / 2 chefs, each with a real daily
+  wage (tip cuts and chef fees die). Second stove enables the 2nd chef;
+  big-pot upgrade = 7-serving batches.
+- **Expansion (T4):** Majlis wing — a visible walled, carpeted build-out
+  with +4 tables, higher rent, higher-tipping customers.
+- **Business panel (T5):** last-7-days profit bars, all-time stats, souq
+  rating, milestone goals with coin rewards (serve 50, first 100-profit
+  day, full staff, open the majlis, master all dishes).
+- **Market depth + balance + deploy (T6):** bulk discounts, light daily
+  price wobble, whole-loop balance, docs, exidex redeploy.
+
+Numbers (first guess, T6 balances): day 180s · wages server 15/chef 25 per
+day · rent terrace 10, majlis 25 · big pot +2 servings.

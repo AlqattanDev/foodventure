@@ -7,6 +7,7 @@ import { StagedCook } from "./StagedCook";
 import { RatingCard } from "./RatingCard";
 import { UpgradeShop } from "./UpgradeShop";
 import { Market } from "./Market";
+import { LedgerCard } from "./LedgerCard";
 import { ServeTray, EateryController } from "./ServeTray";
 
 /** All 2D game UI. Sits above the 3D canvas and switches on the game phase. */
@@ -24,6 +25,7 @@ export function GameUI() {
         {phase === "rating" && <RatingCard key="rating" />}
         {phase === "shop" && <UpgradeShop key="shop" />}
         {phase === "market" && <Market key="market" />}
+        {phase === "ledger" && <LedgerCard key="ledger" />}
       </AnimatePresence>
     </>
   );

@@ -17,14 +17,8 @@ import {
   repDelta,
   type EateryState,
 } from "./eatery";
-import {
-  pickChefDish,
-  pickServeTarget,
-  chefStars,
-  SERVER_TIP_CUT,
-  CHEF_FEE,
-  CHEF_COOK_SECONDS,
-} from "./staff";
+import { pickChefDish, pickServeTarget, chefStars, CHEF_COOK_SECONDS } from "./staff";
+import { DAY_SECONDS } from "./ledger";
 import { haptic } from "./haptics";
 
 export const eatery: EateryState = createEatery();
@@ -44,9 +38,13 @@ export const staffLive = {
 const SERVER_HOME = { x: 0.8, z: 1.7 };
 const SERVER_SPEED = 1.9;
 
+/** The service-day clock (not persisted — a reload closes the day out). */
+export const dayLive = { remaining: 0 };
+
 if ((import.meta as any).env?.DEV && typeof window !== "undefined") {
   (window as any).eatery = eatery;
   (window as any).staffLive = staffLive;
+  (window as any).dayLive = dayLive;
 }
 
 /* ---- external-store bridge for React ---- */
@@ -74,23 +72,67 @@ export function emitIfChanged() {
   }
 }
 
-/** Should the world be running right now? */
+/** Should the world be running right now? Only during an OPEN day. */
 export function eateryRunning(): boolean {
   const g = useGame.getState();
-  if (!g.opened) return false;
+  if (!g.opened || !g.dayOpen) return false;
   return !(g.phase === "cook" && g.cookPurpose === "practice");
 }
+
+/** Open the stall for a service day. */
+export function startDay() {
+  useGame.getState().openDay();
+}
+
+/** Close-out: unserved guests count as lost, the floor clears, books close. */
+export function endDay() {
+  const g = useGame.getState();
+  if (!g.dayOpen) return;
+  clockArmed = false;
+  for (const c of eatery.customers) {
+    if (c.phase === "queueing" || c.phase === "waiting" || c.phase === "toTable" || c.phase === "arriving") {
+      g.applyLost();
+      g.applyRep(-0.04); // turning people away at closing costs a little face
+    }
+  }
+  eatery.customers.length = 0;
+  staffLive.server.phase = "idle";
+  staffLive.server.x = 0.8;
+  staffLive.server.z = 1.7;
+  staffLive.server.carrying = null;
+  emitIfChanged();
+  g.closeDay();
+}
+
+let clockArmed = false;
 
 /** One controller tick: advance the sim and apply its events to the store. */
 export function runEatery(dt: number) {
   const g = useGame.getState();
+
+  // arm a fresh clock whenever a day opens, whoever opened it
+  if (!clockArmed) {
+    dayLive.remaining = DAY_SECONDS;
+    clockArmed = true;
+  }
+
+  // the day clock — hits zero, the stall closes itself
+  dayLive.remaining -= dt;
+  if (dayLive.remaining <= 0) {
+    endDay();
+    return;
+  }
+
   const events = tickEatery(eatery, dt, {
     reputation: g.reputation,
     tables: g.tables,
     unlocked: (Object.keys(g.unlocked) as (keyof typeof g.unlocked)[]).filter((d) => g.unlocked[d]),
     rand: Math.random,
   });
-  for (const ev of events) g.applyRep(repDelta(ev));
+  for (const ev of events) {
+    g.applyRep(repDelta(ev));
+    if (ev.type === "walked-out") g.applyLost();
+  }
   if (g.staff.server) runServer(dt);
   if (g.staff.chef) runChef(dt);
   emitIfChanged();
@@ -134,9 +176,7 @@ function runServer(dt: number) {
         const batch = g.batches[c.dish];
         if (batch && batch.servings > 0) {
           serveCustomer(eatery, c.id, batch.stars);
-          const tip = tipFor(DISHES[c.dish].basePrice, batch.stars, c.servedAtPatience);
-          // the server keeps their cut
-          g.applyServe(c.dish, Math.max(1, Math.round(tip * (1 - SERVER_TIP_CUT))));
+          g.applyServe(c.dish, tipFor(DISHES[c.dish].basePrice, batch.stars, c.servedAtPatience));
         }
         s.phase = "returning";
         s.carrying = null;
@@ -167,7 +207,7 @@ function runChef(dt: number) {
   }
   chef.t += dt;
   if (chef.t >= CHEF_COOK_SECONDS) {
-    g.applyChefBatch(chef.cooking, chefStars(g.bestStars[chef.cooking]), CHEF_FEE);
+    g.applyChefBatch(chef.cooking, chefStars(g.bestStars[chef.cooking]));
     chef.cooking = null;
     chef.t = 0;
   }

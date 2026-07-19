@@ -1,9 +1,7 @@
 /**
  * Staff brains — pure decisions for the hired server and chef, unit-tested.
  * The runtime (eateryLive) walks them around and applies the outcomes.
- *
- * Wages are self-balancing cuts, not timers: the server keeps 20% of every
- * tip they deliver; the chef charges a flat fee per batch cooked.
+ * Staff cost real per-day wages, paid at the day's close-out (game/ledger.ts).
  */
 import type { DishId } from "../data/dishes";
 import { DISH_ORDER, DISHES } from "../data/dishes";
@@ -13,8 +11,6 @@ import type { Customer } from "./eatery";
 import { canCook, type Stock } from "./pantry";
 
 export const HIRE_COST = { server: 120, chef: 300 };
-export const SERVER_TIP_CUT = 0.2;
-export const CHEF_FEE = 12;
 export const CHEF_COOK_SECONDS = 30;
 
 /** What the hired chef cooks at: your best hand result, minus a star. */

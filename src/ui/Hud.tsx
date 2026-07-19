@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DISHES } from "../data/dishes";
 import { useGame } from "../state/game";
+import { dayLive, startDay, endDay } from "../game/eateryLive";
 import { Button, Coin, Stars } from "./kit";
 import { C, FONT } from "./theme";
 
@@ -44,6 +46,8 @@ export function Hud() {
         )}
       </AnimatePresence>
 
+      <DayClock />
+
       <AnimatePresence>
         {showStart && (
           <motion.div
@@ -53,12 +57,57 @@ export function Hud() {
             exit={{ y: 40, opacity: 0 }}
             style={S.bottom}
           >
-            <Button variant="primary" onClick={openSelect} style={{ padding: "17px 46px", fontSize: 20 }}>
-              Start Cooking
-            </Button>
+            <div style={S.bottomCol}>
+              <OpenStallButton />
+              <Button variant="primary" onClick={openSelect} style={{ padding: "15px 42px", fontSize: 18 }}>
+                Start Cooking
+              </Button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+/** Open the stall for a service day — the tycoon's core verb. */
+function OpenStallButton() {
+  const opened = useGame((s) => s.opened);
+  const dayOpen = useGame((s) => s.dayOpen);
+  const day = useGame((s) => s.day);
+  if (!opened || dayOpen) return null;
+  return (
+    <Button variant="gold" onClick={startDay} style={{ padding: "17px 46px", fontSize: 20 }}>
+      ☀️ Open the Stall — Day {day}
+    </Button>
+  );
+}
+
+/** The running day: countdown chip + close-early. */
+function DayClock() {
+  const dayOpen = useGame((s) => s.dayOpen);
+  const day = useGame((s) => s.day);
+  const phase = useGame((s) => s.phase);
+  const [, tick] = useState(0);
+
+  useEffect(() => {
+    if (!dayOpen) return;
+    const t = setInterval(() => tick((x) => x + 1), 500);
+    return () => clearInterval(t);
+  }, [dayOpen]);
+
+  if (!dayOpen || phase === "cook") return null;
+  const s = Math.max(0, Math.ceil(dayLive.remaining));
+  const mm = Math.floor(s / 60);
+  const ss = (s % 60).toString().padStart(2, "0");
+  return (
+    <div style={S.dayClock}>
+      <span style={S.dayClockTime}>
+        ☀️ Day {day} · {mm}:{ss}
+      </span>
+      <button style={S.closeEarly} onClick={endDay}>
+        close up
+      </button>
     </div>
   );
 }
@@ -114,5 +163,33 @@ const S: Record<string, React.CSSProperties> = {
     right: 0,
     display: "flex",
     justifyContent: "center",
+  },
+  bottomCol: { display: "flex", flexDirection: "column", alignItems: "center", gap: 10 },
+  dayClock: {
+    position: "absolute",
+    top: "calc(env(safe-area-inset-top) + 64px)",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    background: "rgba(40,20,10,0.65)",
+    backdropFilter: "blur(10px)",
+    border: `1px solid ${C.glassBorder}`,
+    borderRadius: 999,
+    padding: "7px 8px 7px 16px",
+    pointerEvents: "auto",
+  },
+  dayClockTime: { fontSize: 14, fontWeight: 900, color: C.gold, fontVariantNumeric: "tabular-nums" },
+  closeEarly: {
+    border: "none",
+    borderRadius: 999,
+    padding: "6px 12px",
+    fontSize: 11.5,
+    fontWeight: 900,
+    fontFamily: FONT,
+    background: "rgba(255,240,220,0.14)",
+    color: C.cream,
+    cursor: "pointer",
   },
 };

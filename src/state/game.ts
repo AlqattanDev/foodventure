@@ -18,8 +18,14 @@ import {
   type Stock,
   type IngredientId,
 } from "../game/pantry";
+import {
+  closeOutDay,
+  LEDGER_HISTORY,
+  type DayLedger,
+  type DayTallies,
+} from "../game/ledger";
 
-export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "shop" | "market";
+export type Phase = "idle" | "select" | "book" | "cook" | "rating" | "shop" | "market" | "ledger";
 
 /** Why the pot went on: a batch for the counter, or a paused practice run. */
 export type CookPurpose = "service" | "practice";
@@ -88,6 +94,14 @@ interface GameState {
   opened: boolean;
   /** hired hands — the server carries plates, the chef cooks mastered dishes */
   staff: Staff;
+  /** the business: numbered service days with close-out books */
+  day: number;
+  dayOpen: boolean;
+  dayTallies: DayTallies;
+  /** market spend while closed — attributed to the next opened day */
+  pendingSpend: number;
+  repStart: number;
+  ledgers: DayLedger[];
   result: CookResult | null;
 
   // derived helpers
@@ -110,12 +124,17 @@ interface GameState {
   /** a serving leaves the counter, the tip comes in (called by the eatery runtime) */
   applyServe: (dish: DishId, tip: number) => void;
   applyRep: (delta: number) => void;
+  /** a customer walked out unserved — the day's books remember */
+  applyLost: () => void;
   buyTable: () => void;
   hireStaff: (kind: keyof Staff, cost: number) => void;
   /** chef pot-on: consume the pantry for a dish (runtime already validated) */
   chefConsume: (dish: DishId) => void;
-  /** chef batch lands on the counter; the fee comes off the till */
-  applyChefBatch: (dish: DishId, stars: number, fee: number) => void;
+  /** chef batch lands on the counter (the chef's wage is paid at close-out) */
+  applyChefBatch: (dish: DishId, stars: number) => void;
+  /** the tycoon day */
+  openDay: () => void;
+  closeDay: () => void;
   openShop: () => void;
   openMarket: () => void;
   buyIngredient: (id: IngredientId, qty: number) => void;
@@ -140,6 +159,9 @@ interface SaveBlob {
   tables: number;
   opened: boolean;
   staff: Staff;
+  day: number;
+  ledgers: DayLedger[];
+  pendingSpend: number;
 }
 
 function loadSave(): Partial<SaveBlob> {
@@ -166,6 +188,9 @@ function persist(s: GameState) {
       tables: s.tables,
       opened: s.opened,
       staff: s.staff,
+      day: s.day,
+      ledgers: s.ledgers,
+      pendingSpend: s.pendingSpend,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(blob));
   } catch {
@@ -191,6 +216,12 @@ export const useGame = create<GameState>((set, get) => ({
   tables: saved.tables ?? 2,
   opened: saved.opened ?? false,
   staff: saved.staff ?? { server: false, chef: false },
+  day: saved.day ?? 1,
+  dayOpen: false,
+  dayTallies: { revenue: 0, ingredientSpend: 0, served: 0, lost: 0 },
+  pendingSpend: saved.pendingSpend ?? 0,
+  repStart: 0,
+  ledgers: saved.ledgers ?? [],
   result: null,
 
   burnResist: () => get().upgrades.pot * 0.12 + get().upgrades.stove * 0.14,
@@ -276,11 +307,19 @@ export const useGame = create<GameState>((set, get) => ({
     set((s) => ({
       coins: s.coins + tip,
       batches: { ...s.batches, [dish]: left > 0 ? { ...b, servings: left } : null },
+      dayTallies: {
+        ...s.dayTallies,
+        revenue: s.dayTallies.revenue + tip,
+        served: s.dayTallies.served + 1,
+      },
     }));
   },
 
   applyRep: (delta) =>
     set((s) => ({ reputation: Math.max(0, Math.min(5, s.reputation + delta)) })),
+
+  applyLost: () =>
+    set((s) => ({ dayTallies: { ...s.dayTallies, lost: s.dayTallies.lost + 1 } })),
 
   buyTable: () => {
     const t = get().tables;
@@ -297,11 +336,44 @@ export const useGame = create<GameState>((set, get) => ({
 
   chefConsume: (dish) => set((s) => ({ stock: consume(s.stock, dish) })),
 
-  applyChefBatch: (dish, stars, fee) =>
+  applyChefBatch: (dish, stars) =>
     set((s) => ({
-      coins: Math.max(0, s.coins - fee),
       batches: { ...s.batches, [dish]: { stars, servings: SERVINGS_PER_BATCH } },
     })),
+
+  openDay: () => {
+    if (!get().opened || get().dayOpen) return;
+    set((s) => ({
+      dayOpen: true,
+      repStart: s.reputation,
+      // prep-time market runs belong to the day they feed
+      dayTallies: { revenue: 0, ingredientSpend: s.pendingSpend, served: 0, lost: 0 },
+      pendingSpend: 0,
+      phase: "idle",
+    }));
+  },
+
+  closeDay: () => {
+    if (!get().dayOpen) return;
+    const s = get();
+    const { ledger, coinsAfter } = closeOutDay(
+      s.day,
+      s.dayTallies,
+      { servers: s.staff.server ? 1 : 0, chefs: s.staff.chef ? 1 : 0 },
+      0,
+      s.repStart,
+      s.reputation,
+      s.coins
+    );
+    set((st) => ({
+      dayOpen: false,
+      day: st.day + 1,
+      coins: coinsAfter,
+      ledgers: [...st.ledgers, ledger].slice(-LEDGER_HISTORY),
+      dayTallies: { revenue: 0, ingredientSpend: 0, served: 0, lost: 0 },
+      phase: "ledger",
+    }));
+  },
 
   openShop: () => set({ phase: "shop" }),
   openMarket: () => set({ phase: "market" }),
@@ -309,7 +381,15 @@ export const useGame = create<GameState>((set, get) => ({
   buyIngredient: (id, qty) => {
     const r = buy(get().stock, id, qty, get().coins, get().upgrades.shelf);
     if (r.bought === 0) return;
-    set({ stock: r.stock, coins: r.coins });
+    const spent = get().coins - r.coins;
+    set((s) => ({
+      stock: r.stock,
+      coins: r.coins,
+      // spend while open hits today's books; prep buys roll into the next day
+      ...(s.dayOpen
+        ? { dayTallies: { ...s.dayTallies, ingredientSpend: s.dayTallies.ingredientSpend + spent } }
+        : { pendingSpend: s.pendingSpend + spent }),
+    }));
   },
 
   buyUpgrade: (kind) => {
