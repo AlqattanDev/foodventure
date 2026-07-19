@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { useGame } from "../state/game";
 import { TABLE_SPOTS } from "../game/eatery";
 import type { Customer } from "../game/eatery";
-import { eatery, subscribeEatery, eaterySnapshot } from "../game/eateryLive";
+import { eatery, staffLive, subscribeEatery, eaterySnapshot } from "../game/eateryLive";
 
 const GROUND = -0.34;
 
@@ -66,6 +66,107 @@ export function Eatery() {
 
       {/* the people */}
       {opened && eatery.customers.map((c) => <Person key={c.id} customer={c} />)}
+
+      {/* the hired hands */}
+      <Server />
+      <ChefStation />
+    </group>
+  );
+}
+
+/** The hired server — teal vest, carries plates counter → table. */
+function Server() {
+  const hired = useGame((s) => s.staff.server);
+  const group = useRef<THREE.Group>(null);
+  const plate = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    const g = group.current;
+    if (!g || !hired) return;
+    const s = staffLive.server;
+    const t = state.clock.elapsedTime;
+    g.position.set(s.x, GROUND, s.z);
+    g.rotation.z = s.phase !== "idle" ? Math.sin(t * 11) * 0.06 : 0;
+    if (plate.current) plate.current.visible = s.carrying !== null;
+  });
+
+  if (!hired) return null;
+  return (
+    <group ref={group}>
+      <mesh position={[0, 0.42, 0]} castShadow>
+        <cylinderGeometry args={[0.13, 0.22, 0.84, 12]} />
+        <meshStandardMaterial color="#3fb0a4" roughness={0.85} />
+      </mesh>
+      <mesh position={[0, 0.98, 0]} castShadow>
+        <sphereGeometry args={[0.15, 16, 14]} />
+        <meshStandardMaterial color="#b98a66" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 1.08, 0]} castShadow>
+        <sphereGeometry args={[0.155, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.45]} />
+        <meshStandardMaterial color="#fff3e2" roughness={0.8} />
+      </mesh>
+      {/* the plate they carry */}
+      <mesh ref={plate} position={[0.22, 0.72, 0.1]} visible={false} castShadow>
+        <cylinderGeometry args={[0.13, 0.15, 0.045, 14]} />
+        <meshStandardMaterial color="#f2ede2" roughness={0.4} />
+      </mesh>
+    </group>
+  );
+}
+
+/** The hired chef's back pot — steams while a batch is on. */
+function ChefStation() {
+  const hired = useGame((s) => s.staff.chef);
+  const potGlow = useRef<THREE.PointLight>(null);
+  const body = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!hired) return;
+    const cooking = staffLive.chef.cooking !== null;
+    const t = state.clock.elapsedTime;
+    if (potGlow.current) {
+      potGlow.current.intensity = cooking ? 1.4 + Math.sin(t * 18) * 0.3 : 0.2;
+    }
+    if (body.current) {
+      // stir bob while a pot is on
+      body.current.position.y = GROUND + (cooking ? Math.abs(Math.sin(t * 6)) * 0.05 : 0);
+      body.current.rotation.y = cooking ? Math.sin(t * 3) * 0.15 : 0.4;
+    }
+  });
+
+  if (!hired) return null;
+  return (
+    <group position={[-3.1, 0, 1.7]}>
+      {/* mini stove + pot */}
+      <mesh position={[0, GROUND + 0.14, 0]} castShadow>
+        <cylinderGeometry args={[0.3, 0.34, 0.28, 14]} />
+        <meshStandardMaterial color="#2f2320" roughness={0.5} metalness={0.5} />
+      </mesh>
+      <pointLight ref={potGlow} position={[0, GROUND + 0.3, 0]} intensity={0.2} distance={1.4} color="#ff7a2a" />
+      <mesh position={[0, GROUND + 0.4, 0]} castShadow>
+        <sphereGeometry args={[0.26, 18, 14, 0, Math.PI * 2, 0, Math.PI * 0.62]} />
+        <meshPhysicalMaterial color="#c9743a" metalness={0.85} roughness={0.35} />
+      </mesh>
+      {/* the chef */}
+      <group ref={body} position={[0.5, GROUND, 0.25]} rotation={[0, 0.4, 0]}>
+        <mesh position={[0, 0.42, 0]} castShadow>
+          <cylinderGeometry args={[0.14, 0.24, 0.84, 12]} />
+          <meshStandardMaterial color="#e8e2d4" roughness={0.85} />
+        </mesh>
+        <mesh position={[0, 0.98, 0]} castShadow>
+          <sphereGeometry args={[0.15, 16, 14]} />
+          <meshStandardMaterial color="#a9805c" roughness={0.7} />
+        </mesh>
+        {/* chef hat */}
+        <mesh position={[0, 1.14, 0]} castShadow>
+          <cylinderGeometry args={[0.13, 0.15, 0.16, 12]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.9} />
+        </mesh>
+        <mesh position={[0, 1.23, 0]} castShadow>
+          <sphereGeometry args={[0.14, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.9} />
+        </mesh>
+      </group>
     </group>
   );
 }

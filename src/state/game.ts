@@ -33,6 +33,11 @@ export interface Batch {
 export const TABLE_COST = [80, 150, 240, 360];
 export const SERVINGS_PER_BATCH = 5;
 
+export interface Staff {
+  server: boolean;
+  chef: boolean;
+}
+
 export interface Upgrades {
   /** 0..2 — slower burn (a thicker pot forgives) */
   pot: number;
@@ -81,6 +86,8 @@ interface GameState {
   tables: number;
   /** the eatery goes live once the first batch reaches the counter */
   opened: boolean;
+  /** hired hands — the server carries plates, the chef cooks mastered dishes */
+  staff: Staff;
   result: CookResult | null;
 
   // derived helpers
@@ -104,6 +111,11 @@ interface GameState {
   applyServe: (dish: DishId, tip: number) => void;
   applyRep: (delta: number) => void;
   buyTable: () => void;
+  hireStaff: (kind: keyof Staff, cost: number) => void;
+  /** chef pot-on: consume the pantry for a dish (runtime already validated) */
+  chefConsume: (dish: DishId) => void;
+  /** chef batch lands on the counter; the fee comes off the till */
+  applyChefBatch: (dish: DishId, stars: number, fee: number) => void;
   openShop: () => void;
   openMarket: () => void;
   buyIngredient: (id: IngredientId, qty: number) => void;
@@ -127,6 +139,7 @@ interface SaveBlob {
   reputation: number;
   tables: number;
   opened: boolean;
+  staff: Staff;
 }
 
 function loadSave(): Partial<SaveBlob> {
@@ -152,6 +165,7 @@ function persist(s: GameState) {
       reputation: s.reputation,
       tables: s.tables,
       opened: s.opened,
+      staff: s.staff,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(blob));
   } catch {
@@ -176,6 +190,7 @@ export const useGame = create<GameState>((set, get) => ({
   reputation: saved.reputation ?? 0,
   tables: saved.tables ?? 2,
   opened: saved.opened ?? false,
+  staff: saved.staff ?? { server: false, chef: false },
   result: null,
 
   burnResist: () => get().upgrades.pot * 0.12 + get().upgrades.stove * 0.14,
@@ -274,6 +289,19 @@ export const useGame = create<GameState>((set, get) => ({
     if (get().coins < cost) return;
     set((s) => ({ coins: s.coins - cost, tables: t + 1 }));
   },
+
+  hireStaff: (kind, cost) => {
+    if (get().staff[kind] || get().coins < cost) return;
+    set((s) => ({ coins: s.coins - cost, staff: { ...s.staff, [kind]: true } }));
+  },
+
+  chefConsume: (dish) => set((s) => ({ stock: consume(s.stock, dish) })),
+
+  applyChefBatch: (dish, stars, fee) =>
+    set((s) => ({
+      coins: Math.max(0, s.coins - fee),
+      batches: { ...s.batches, [dish]: { stars, servings: SERVINGS_PER_BATCH } },
+    })),
 
   openShop: () => set({ phase: "shop" }),
   openMarket: () => set({ phase: "market" }),

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { DISHES, DISH_ORDER } from "../data/dishes";
 import { useGame, UPGRADE_COST, TABLE_COST } from "../state/game";
+import { HIRE_COST, SERVER_TIP_CUT, CHEF_FEE } from "../game/staff";
 import { Button, Coin } from "./kit";
 import { C, FONT, pop } from "./theme";
 
@@ -67,6 +68,34 @@ export function UpgradeShop() {
           onBuy={() => g.buyUpgrade("shelf")}
         />
 
+        {g.opened && (
+          <>
+            <div style={S.section}>Staff</div>
+            <HireRow
+              icon="🤵"
+              name="Server"
+              desc={`Carries plates to the tables for you — keeps ${Math.round(SERVER_TIP_CUT * 100)}% of each tip.`}
+              hired={g.staff.server}
+              cost={HIRE_COST.server}
+              coins={g.coins}
+              locked={false}
+              lockText=""
+              onHire={() => g.hireStaff("server", HIRE_COST.server)}
+            />
+            <HireRow
+              icon="👨‍🍳"
+              name="Chef"
+              desc={`Auto-cooks your MASTERED dishes (one star below your best) — ${CHEF_FEE} coins a batch.`}
+              hired={g.staff.chef}
+              cost={HIRE_COST.chef}
+              coins={g.coins}
+              locked={!DISH_ORDER.some((d) => g.mastery[d].mastered)}
+              lockText="Master a dish first"
+              onHire={() => g.hireStaff("chef", HIRE_COST.chef)}
+            />
+          </>
+        )}
+
         {nextLocked.length > 0 && <div style={S.section}>New Recipes</div>}
         {nextLocked.map((id) => {
           const dish = DISHES[id];
@@ -94,6 +123,33 @@ export function UpgradeShop() {
 
         <Button variant="primary" onClick={g.openSelect} style={{ width: "100%", marginTop: 18 }}>Back to cooking</Button>
       </motion.div>
+    </div>
+  );
+}
+
+function HireRow({ icon, name, desc, hired, cost, coins, locked, lockText, onHire }: {
+  icon: string; name: string; desc: string; hired: boolean; cost: number; coins: number;
+  locked: boolean; lockText: string; onHire: () => void;
+}) {
+  return (
+    <div style={S.row}>
+      <div style={S.icon}>{icon}</div>
+      <div style={{ flex: 1 }}>
+        <div style={S.rName}>{name}</div>
+        <div style={S.rDesc}>{locked && !hired ? `🔒 ${lockText}` : desc}</div>
+      </div>
+      {hired ? (
+        <div style={S.maxed}>HIRED ✓</div>
+      ) : (
+        <Button
+          variant={!locked && coins >= cost ? "gold" : "ghost"}
+          disabled={locked || coins < cost}
+          onClick={onHire}
+          style={{ padding: "12px 16px", fontSize: 14 }}
+        >
+          🪙 {cost}
+        </Button>
+      )}
     </div>
   );
 }
