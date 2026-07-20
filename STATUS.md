@@ -32,7 +32,7 @@ React + TypeScript + Vite · Three.js via React Three Fiber + Drei · postproces
 - Dev handles on `window`: `useGame`, `cookViz`, `eatery`, `staffLive`, `dayLive`, `__pour`.
 
 ## Deploy (exidex showcase)
-- exidex.dev/foodventure — `npm run exidex` rebuilds `.exidex/` (preserves card.json + thumb.png); commit + push, Mini pulls. Card is `hidden: true` pending Ali's playtest.
+- exidex.dev/foodventure — `npm run exidex` rebuilds `.exidex/` (preserves card.json + thumb.png); commit + push, Mini pulls. Card is public (`showcase: public`, `hidden: false`) — listed in the gallery.
 - Remote: `github.com/AlqattanDev/foodventure`.
 
 ## Mobile (Capacitor)

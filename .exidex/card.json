@@ -7,7 +7,8 @@
   "repo": "https://github.com/AlqattanDev/foodventure",
   "accent": "#E8A33D",
   "order": 45,
-  "hidden": true,
+  "showcase": "public",
+  "hidden": false,
   "tags": [
     "game",
     "3d",
