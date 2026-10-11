@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 200" fill="none">
+  <defs><linearGradient id="scarf" x1="48" y1="32" x2="141" y2="178" gradientUnits="userSpaceOnUse"><stop stop-color="#E78868"/><stop offset="1" stop-color="#AC4C3E"/></linearGradient><linearGradient id="skin" x1="67" y1="55" x2="116" y2="130" gradientUnits="userSpaceOnUse"><stop stop-color="#EBC293"/><stop offset="1" stop-color="#D5A06E"/></linearGradient></defs>
+  <path d="M16 200L24 172C29 153 47 141 64 139H116C134 142 152 151 156 171L164 200Z" fill="#387B73" stroke="#286158" stroke-width="2"/>
+  <path d="M54 158L46 199M125 158L133 199" stroke="#59998C" stroke-width="3" stroke-linecap="round"/>
+  <path d="M36 152C43 126 39 83 45 61C52 32 67 23 89 23C114 23 132 36 137 64C141 89 137 124 146 151C133 169 113 180 89 185C64 180 48 169 36 152Z" fill="url(#scarf)" stroke="#A15042" stroke-width="2"/>
+  <path d="M60 61C72 43 107 45 120 63L118 108C115 128 104 140 89 140C73 140 60 127 58 106Z" fill="url(#skin)" stroke="#BE865F" stroke-width="2"/>
+  <path d="M60 61C72 63 92 59 99 49C106 55 114 60 120 63L120 77C126 58 115 38 95 35C73 31 56 40 54 60L58 81Z" fill="#B85343"/>
+  <path d="M69 83C74 80 80 80 84 83M98 82C104 79 110 80 113 83" stroke="#72503A" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="77" cy="94" rx="3" ry="4.5" fill="#3A322B"/><ellipse cx="105" cy="94" rx="3" ry="4.5" fill="#3A322B"/>
+  <circle cx="78" cy="92" r="1" fill="#FFF5DE"/><circle cx="106" cy="92" r="1" fill="#FFF5DE"/>
+  <path d="M90 96L86 109H92" stroke="#BB825D" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="69" cy="108" rx="7" ry="3.5" fill="#DE966F" opacity=".6"/><ellipse cx="112" cy="108" rx="7" ry="3.5" fill="#DE966F" opacity=".6"/>
+  <path d="M79 119C84 125 96 125 102 118" stroke="#A65D4A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M53 111C63 140 80 147 109 149C102 161 91 172 84 181M125 98C123 134 108 153 91 165" stroke="#F0A081" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+  <path d="M46 139C52 151 58 157 69 162" stroke="#91463C" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="119" cy="151" r="5" fill="#ECC46E"/><circle cx="119" cy="151" r="2" fill="#FFF0AF"/>
+</svg>

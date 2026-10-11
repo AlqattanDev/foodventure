@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-11T15:56:44.347815+00:00",
+  "title": "Design System: Foodventure",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Teal Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0512 176.28)",
+          "oklch(26% 0.0512 176.28)",
+          "oklch(38% 0.0512 176.28)",
+          "oklch(49% 0.0512 176.28)",
+          "oklch(61% 0.0512 176.28)",
+          "oklch(72% 0.0512 176.28)",
+          "oklch(84% 0.0512 176.28)",
+          "oklch(95% 0.0512 176.28)"
+        ]
+      },
+      "teal": {
+        "role": "secondary",
+        "displayName": "Painted Stall Teal",
+        "tonalRamp": [
+          "oklch(15% 0.0745 173.92)",
+          "oklch(26% 0.0745 173.92)",
+          "oklch(38% 0.0745 173.92)",
+          "oklch(49% 0.0745 173.92)",
+          "oklch(61% 0.0745 173.92)",
+          "oklch(72% 0.0745 173.92)",
+          "oklch(84% 0.0745 173.92)",
+          "oklch(95% 0.0745 173.92)"
+        ]
+      },
+      "coral": {
+        "role": "primary",
+        "displayName": "Coral Awning",
+        "tonalRamp": [
+          "oklch(15% 0.1500 30.98)",
+          "oklch(26% 0.1500 30.98)",
+          "oklch(38% 0.1500 30.98)",
+          "oklch(49% 0.1500 30.98)",
+          "oklch(61% 0.1500 30.98)",
+          "oklch(72% 0.1500 30.98)",
+          "oklch(84% 0.1500 30.98)",
+          "oklch(95% 0.1500 30.98)"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Warm Cream",
+        "tonalRamp": [
+          "oklch(15% 0.0312 84.59)",
+          "oklch(26% 0.0312 84.59)",
+          "oklch(38% 0.0312 84.59)",
+          "oklch(49% 0.0312 84.59)",
+          "oklch(61% 0.0312 84.59)",
+          "oklch(72% 0.0312 84.59)",
+          "oklch(84% 0.0312 84.59)",
+          "oklch(95% 0.0312 84.59)"
+        ]
+      },
+      "quiet": {
+        "role": "neutral",
+        "displayName": "Quiet Brown",
+        "tonalRamp": [
+          "oklch(15% 0.0430 62.54)",
+          "oklch(26% 0.0430 62.54)",
+          "oklch(38% 0.0430 62.54)",
+          "oklch(49% 0.0430 62.54)",
+          "oklch(61% 0.0430 62.54)",
+          "oklch(72% 0.0430 62.54)",
+          "oklch(84% 0.0430 62.54)",
+          "oklch(95% 0.0430 62.54)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Sunlit Sand",
+        "tonalRamp": [
+          "oklch(15% 0.0826 74.09)",
+          "oklch(26% 0.0826 74.09)",
+          "oklch(38% 0.0826 74.09)",
+          "oklch(49% 0.0826 74.09)",
+          "oklch(61% 0.0826 74.09)",
+          "oklch(72% 0.0826 74.09)",
+          "oklch(84% 0.0826 74.09)",
+          "oklch(95% 0.0826 74.09)"
+        ]
+      },
+      "worktop": {
+        "role": "neutral",
+        "displayName": "Serving Cloth",
+        "tonalRamp": [
+          "oklch(15% 0.0272 83.54)",
+          "oklch(26% 0.0272 83.54)",
+          "oklch(38% 0.0272 83.54)",
+          "oklch(49% 0.0272 83.54)",
+          "oklch(61% 0.0272 83.54)",
+          "oklch(72% 0.0272 83.54)",
+          "oklch(84% 0.0272 83.54)",
+          "oklch(95% 0.0272 83.54)"
+        ]
+      },
+      "ceramic": {
+        "role": "neutral",
+        "displayName": "Cream Ceramic",
+        "tonalRamp": [
+          "oklch(15% 0.0220 89.79)",
+          "oklch(26% 0.0220 89.79)",
+          "oklch(38% 0.0220 89.79)",
+          "oklch(49% 0.0220 89.79)",
+          "oklch(61% 0.0220 89.79)",
+          "oklch(72% 0.0220 89.79)",
+          "oklch(84% 0.0220 89.79)",
+          "oklch(95% 0.0220 89.79)"
+        ]
+      },
+      "cook-green": {
+        "role": "primary",
+        "displayName": "Cooking Green",
+        "tonalRamp": [
+          "oklch(15% 0.0652 168.35)",
+          "oklch(26% 0.0652 168.35)",
+          "oklch(38% 0.0652 168.35)",
+          "oklch(49% 0.0652 168.35)",
+          "oklch(61% 0.0652 168.35)",
+          "oklch(72% 0.0652 168.35)",
+          "oklch(84% 0.0652 168.35)",
+          "oklch(95% 0.0652 168.35)"
+        ]
+      },
+      "serve-green": {
+        "role": "primary",
+        "displayName": "Serving Green",
+        "tonalRamp": [
+          "oklch(15% 0.0761 170.57)",
+          "oklch(26% 0.0761 170.57)",
+          "oklch(38% 0.0761 170.57)",
+          "oklch(49% 0.0761 170.57)",
+          "oklch(61% 0.0761 170.57)",
+          "oklch(72% 0.0761 170.57)",
+          "oklch(84% 0.0761 170.57)",
+          "oklch(95% 0.0761 170.57)"
+        ]
+      },
+      "star-gold": {
+        "role": "tertiary",
+        "displayName": "Earned Star Gold",
+        "tonalRamp": [
+          "oklch(15% 0.1430 82.64)",
+          "oklch(26% 0.1430 82.64)",
+          "oklch(38% 0.1430 82.64)",
+          "oklch(49% 0.1430 82.64)",
+          "oklch(61% 0.1430 82.64)",
+          "oklch(72% 0.1430 82.64)",
+          "oklch(84% 0.1430 82.64)",
+          "oklch(95% 0.1430 82.64)"
+        ]
+      },
+      "order-selected": {
+        "role": "neutral",
+        "displayName": "Selected Order Cream",
+        "tonalRamp": [
+          "oklch(15% 0.0430 92.66)",
+          "oklch(26% 0.0430 92.66)",
+          "oklch(38% 0.0430 92.66)",
+          "oklch(49% 0.0430 92.66)",
+          "oklch(61% 0.0430 92.66)",
+          "oklch(72% 0.0430 92.66)",
+          "oklch(84% 0.0430 92.66)",
+          "oklch(95% 0.0430 92.66)"
+        ]
+      },
+      "order-outline": {
+        "role": "tertiary",
+        "displayName": "Brass Order Outline",
+        "tonalRamp": [
+          "oklch(15% 0.1199 66.48)",
+          "oklch(26% 0.1199 66.48)",
+          "oklch(38% 0.1199 66.48)",
+          "oklch(49% 0.1199 66.48)",
+          "oklch(61% 0.1199 66.48)",
+          "oklch(72% 0.1199 66.48)",
+          "oklch(84% 0.1199 66.48)",
+          "oklch(95% 0.1199 66.48)"
+        ]
+      },
+      "trim": {
+        "role": "secondary",
+        "displayName": "Coral Counter Trim",
+        "tonalRamp": [
+          "oklch(15% 0.1349 35.96)",
+          "oklch(26% 0.1349 35.96)",
+          "oklch(38% 0.1349 35.96)",
+          "oklch(49% 0.1349 35.96)",
+          "oklch(61% 0.1349 35.96)",
+          "oklch(72% 0.1349 35.96)",
+          "oklch(84% 0.1349 35.96)",
+          "oklch(95% 0.1349 35.96)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Welcome wordmark",
+        "purpose": "The large opening Foodventure title; compact mobile clamp is documented in CSS."
+      },
+      "headline": {
+        "displayName": "Result heading",
+        "purpose": "Day-end celebration."
+      },
+      "title": {
+        "displayName": "Recipe name",
+        "purpose": "The current dish on the worktop."
+      },
+      "body": {
+        "displayName": "Serving instruction",
+        "purpose": "One supporting sentence beneath the finished dish."
+      },
+      "label": {
+        "displayName": "Score caption",
+        "purpose": "Compact status labels."
+      },
+      "action-primary": {
+        "displayName": "Primary action",
+        "purpose": "Open, next day, and serving labels."
+      },
+      "action-cook": {
+        "displayName": "Cooking action",
+        "purpose": "The immediate gesture and its feedback."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-panel",
+        "value": "0 10px 30px #65411b25",
+        "purpose": "Shared elevation on the results panel."
+      },
+      {
+        "name": "worktop",
+        "value": "0 13px 35px #67431c32",
+        "purpose": "Structural separation for the serving counter."
+      },
+      {
+        "name": "primary-action",
+        "value": "0 6px 15px #9433232b",
+        "purpose": "A small warm lift beneath coral and serving buttons."
+      },
+      {
+        "name": "cooking-action",
+        "value": "0 5px 12px rgb(49 82 49 / 17%)",
+        "purpose": "The resting green cooking control."
+      },
+      {
+        "name": "pause-dialog",
+        "value": "0 22px 60px #142b4266",
+        "purpose": "The modal tea-break panel."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Existing --ease for settling, entrances, and press feedback."
+      },
+      {
+        "name": "button-transition",
+        "value": "160ms",
+        "purpose": "Primary button transform and background response."
+      },
+      {
+        "name": "screen-enter",
+        "value": "300ms",
+        "purpose": "Small vertical entrance of a screen."
+      },
+      {
+        "name": "step-completion",
+        "value": "230ms / 340ms",
+        "purpose": "Visible completion before the next step: pour/stir versus tap/fold."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none; transition: none",
+        "purpose": "Retain static state and explicit feedback while suppressing decorative movement."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "(min-width: 900px)"
+      },
+      {
+        "name": "phone",
+        "value": "(max-width: 600px)"
+      },
+      {
+        "name": "narrow",
+        "value": "(max-width: 360px)"
+      },
+      {
+        "name": "short-phone",
+        "value": "(max-height: 730px) and (max-width: 600px)"
+      },
+      {
+        "name": "very-short-phone",
+        "value": "(max-height: 620px) and (max-width: 600px)"
+      },
+      {
+        "name": "compact-cooking",
+        "value": "(max-height: 740px)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Opens the stall or advances to the next rush; the dominant coral action.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Open my stall<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:58px;padding:16px 26px;border:0;border-radius:16px;background:var(--coral,#b84736);color:#fff7e8;font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif;font-size:19px;font-weight:850;cursor:pointer;box-shadow:0 6px 15px #9433232b;transition:transform 160ms var(--ease,cubic-bezier(.16,1,.3,1)),background 160ms} .ds-btn-primary svg{flex-shrink:0} .ds-btn-primary:active{transform:translateY(2px) scale(.98)} .ds-btn-primary:focus-visible{outline:3px solid #217963;outline-offset:4px} .ds-btn-primary:disabled{cursor:default;opacity:.6} @media(hover:hover){.ds-btn-primary:hover:not(:disabled){background:#a23f30}} @media(prefers-reduced-motion:reduce){.ds-btn-primary{transition:none} .ds-btn-primary:active{transform:none}}"
+    },
+    {
+      "name": "Serve action",
+      "kind": "button",
+      "refersTo": "button-serve",
+      "description": "Hands off the finished dish with the existing full-width green action.",
+      "html": "<button class=\"ds-btn-serve\" type=\"button\">Serve karak<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn-serve{display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:56px;padding:16px 26px;border:0;border-radius:16px;background:#286c58;color:#fff7e8;font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif;font-size:19px;font-weight:850;cursor:pointer;box-shadow:0 6px 15px #9433232b;transition:transform 160ms var(--ease,cubic-bezier(.16,1,.3,1)),background 160ms} .ds-btn-serve svg{flex-shrink:0} .ds-btn-serve:active{transform:translateY(2px) scale(.98)} .ds-btn-serve:focus-visible{outline:3px solid #217963;outline-offset:4px} .ds-btn-serve:disabled{cursor:default;opacity:.6} @media(hover:hover){.ds-btn-serve:hover:not(:disabled){background:#205843}} @media(prefers-reduced-motion:reduce){.ds-btn-serve{transition:none} .ds-btn-serve:active{transform:none}} .ds-btn-serve{width:100%;max-width:400px}"
+    },
+    {
+      "name": "Cooking action",
+      "kind": "button",
+      "refersTo": "button-cook",
+      "description": "One explicit gesture instruction, with progress beneath the label and a gold completion state.",
+      "html": "<button class=\"ds-cook-action\" type=\"button\"><span class=\"ds-cook-progress\" aria-hidden=\"true\"></span><span class=\"ds-cook-label\">Hold to pour</span><svg class=\"ds-cook-icon\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/></svg></button>",
+      "css": ".ds-cook-action{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:56px;padding:14px 22px;overflow:hidden;border:0;border-radius:16px;background:#225846;color:#fff9e9;box-shadow:0 5px 12px rgb(49 82 49 / 17%);font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif;font-size:17px;font-weight:800;line-height:1.4;cursor:pointer;touch-action:none;transition:transform 130ms cubic-bezier(.16,1,.3,1),background-color 160ms ease,box-shadow 160ms ease} .ds-cook-progress{position:absolute;inset:0;transform:scaleX(0);transform-origin:left;background:rgb(212 236 170 / 17%);pointer-events:none} .ds-cook-label,.ds-cook-icon{position:relative;z-index:1;pointer-events:none} .ds-cook-icon{width:24px;height:24px;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round} .ds-cook-action:focus-visible{outline:3px solid #215e50;outline-offset:4px} .ds-cook-action:active{transform:translateY(2px) scale(.985);background:#1b4c3c;box-shadow:0 2px 6px rgb(49 82 49 / 12%)} .ds-cook-action:disabled{background:#627b60;box-shadow:none;opacity:.6;cursor:default} .ds-cook-action.ds-done{background:#e9be64;color:#3e491f;opacity:1;transform:none} @media(hover:hover){.ds-cook-action:hover:not(:disabled){background:#2f6953;box-shadow:0 7px 15px rgb(49 82 49 / 20%)}} @media(prefers-reduced-motion:reduce){.ds-cook-action{transition:none} .ds-cook-action:active{transform:none}}"
+    },
+    {
+      "name": "Icon action",
+      "kind": "button",
+      "refersTo": "button-icon",
+      "description": "Circular pause and mute controls, with a 44px mobile target.",
+      "html": "<button class=\"ds-icon-button\" type=\"button\" aria-label=\"Pause game\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M8 5v14M16 5v14\" stroke-width=\"4\"/></svg></button>",
+      "css": ".ds-icon-button{display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:50%;color:var(--ink,#234e44);background:#fff4e8ed;box-shadow:0 3px 12px #6c442327;cursor:pointer;transition:transform 160ms var(--ease,cubic-bezier(.16,1,.3,1)),background 160ms}.ds-icon-button:active{transform:scale(.92)}.ds-icon-button:focus-visible{outline:3px solid #217963;outline-offset:4px}.ds-icon-button[aria-pressed=true]{background:#e2e9ce}@media(hover:hover){.ds-icon-button:hover{background:#fffaf0;transform:translateY(-1px)}}@media(max-width:600px){.ds-icon-button{width:44px;height:44px}}@media(prefers-reduced-motion:reduce){.ds-icon-button{transition:none}.ds-icon-button:active,.ds-icon-button:hover{transform:none}}"
+    },
+    {
+      "name": "Secondary text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Replay or return home without competing with the primary action.",
+      "html": "<button class=\"ds-text-button\" type=\"button\">Replay day 1</button>",
+      "css": ".ds-text-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:10px 14px;border:0;border-radius:10px;background:transparent;color:#356657;font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif;font-size:14px;font-weight:750;cursor:pointer} .ds-text-button:active{background:#e5e9cc} .ds-text-button:focus-visible{outline:3px solid #217963;outline-offset:4px} @media(hover:hover){.ds-text-button:hover{background:#e9ead4}}"
+    },
+    {
+      "name": "Selected customer order",
+      "kind": "custom",
+      "refersTo": "order-bubble",
+      "description": "A fictional customer, dish bubble, selected outline, and patience bar.",
+      "html": "<button class=\"ds-customer\" type=\"button\" aria-label=\"Karak order, selected\" aria-pressed=\"true\"><span class=\"ds-order-bubble\"><svg class=\"ds-order-food\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 200\" fill=\"none\">\n  <defs>\n    <linearGradient id=\"ds-order-cup\" x1=\"68\" y1=\"80\" x2=\"167\" y2=\"164\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FFF8DC\"/><stop offset=\".5\" stop-color=\"#F5E4BB\"/><stop offset=\"1\" stop-color=\"#D7B67C\"/></linearGradient>\n    <linearGradient id=\"ds-order-tea\" x1=\"113\" y1=\"56\" x2=\"135\" y2=\"93\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#8F431B\"/><stop offset=\".48\" stop-color=\"#BD7137\"/><stop offset=\"1\" stop-color=\"#E0A85F\"/></linearGradient>\n    <linearGradient id=\"ds-order-rim\" x1=\"110\" y1=\"143\" x2=\"118\" y2=\"183\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FDF1D0\"/><stop offset=\"1\" stop-color=\"#D6B582\"/></linearGradient>\n  </defs>\n  <ellipse cx=\"121\" cy=\"178\" rx=\"91\" ry=\"13\" fill=\"#5B3726\" opacity=\".15\"/>\n  <ellipse cx=\"119\" cy=\"162\" rx=\"97\" ry=\"25\" fill=\"url(#ds-order-rim)\"/>\n  <ellipse cx=\"119\" cy=\"157\" rx=\"96\" ry=\"22\" fill=\"#FFFAE9\" stroke=\"#ECD5AA\" stroke-width=\"3\"/>\n  <ellipse cx=\"119\" cy=\"158\" rx=\"76\" ry=\"16\" stroke=\"#75AAA2\" stroke-width=\"2\"/>\n  <path d=\"M177 86C223 73 222 126 176 132\" stroke=\"#C5A36C\" stroke-width=\"18\" stroke-linecap=\"round\"/>\n  <path d=\"M178 85C217 76 216 122 178 125\" stroke=\"#FFF0CB\" stroke-width=\"11\" stroke-linecap=\"round\"/>\n  <path d=\"M61 77L72 138C76 158 94 169 122 169C149 169 168 158 172 138L184 77H61Z\" fill=\"url(#ds-order-cup)\" stroke=\"#CBB085\" stroke-width=\"2\"/>\n  <path d=\"M69 109C99 123 149 124 177 109L174 124C144 139 101 138 71 124Z\" fill=\"#C95F42\"/>\n  <path d=\"M82 120L89 115L96 121L89 125Z M111 124L118 119L125 125L118 129Z M140 122L147 117L154 122L147 127Z\" fill=\"#F5CF80\"/>\n  <path d=\"M79 91L85 105M88 136L91 145\" stroke=\"#FFFBE5\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\".85\"/>\n  <ellipse cx=\"122\" cy=\"77\" rx=\"62\" ry=\"25\" fill=\"#FDF4D8\" stroke=\"#CFAE76\" stroke-width=\"2\"/>\n  <ellipse cx=\"122\" cy=\"78\" rx=\"54\" ry=\"18\" fill=\"url(#ds-order-tea)\"/>\n  <path d=\"M80 79C90 64 131 63 153 71\" stroke=\"#EBC28A\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n  <path d=\"M140 77C130 71 115 73 114 80C113 86 131 87 143 82C157 75 138 68 127 72\" stroke=\"#F3CE92\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  <ellipse cx=\"91\" cy=\"82\" rx=\"3\" ry=\"1.5\" fill=\"#FBE2B2\"/><ellipse cx=\"98\" cy=\"75\" rx=\"2\" ry=\"1.2\" fill=\"#FBE2B2\"/>\n  <path d=\"M97 47C84 35 110 28 101 13M124 45C113 30 139 28 130 9M150 47C142 37 158 31 153 22\" stroke=\"#FFF9E5\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\".72\"/>\n</svg><span>Karak</span></span><svg class=\"ds-customer-portrait\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 180 200\" fill=\"none\">\n  <defs><linearGradient id=\"ds-guest-skin\" x1=\"64\" y1=\"60\" x2=\"119\" y2=\"143\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#DDA875\"/><stop offset=\"1\" stop-color=\"#BE7F51\"/></linearGradient><linearGradient id=\"ds-guest-cloth\" x1=\"64\" y1=\"144\" x2=\"138\" y2=\"200\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FFFAE7\"/><stop offset=\"1\" stop-color=\"#DDD8BC\"/></linearGradient></defs>\n  <path d=\"M20 200L25 168C29 150 53 139 69 138H110C126 139 150 150 155 168L162 200\" fill=\"url(#ds-guest-cloth)\" stroke=\"#C7C5AC\" stroke-width=\"2\"/>\n  <path d=\"M75 123H105V151C101 163 79 163 75 151Z\" fill=\"url(#ds-guest-skin)\"/>\n  <path d=\"M60 55C35 73 46 116 34 158C48 166 65 162 75 155L74 102L111 97L109 154C124 164 137 166 150 158C136 119 144 76 121 53Z\" fill=\"#F9F7E6\" stroke=\"#D3D3BD\" stroke-width=\"2\"/>\n  <ellipse cx=\"57\" cy=\"99\" rx=\"10\" ry=\"14\" fill=\"#CA895B\"/><ellipse cx=\"123\" cy=\"99\" rx=\"10\" ry=\"14\" fill=\"#CA895B\"/>\n  <path d=\"M58 64C61 38 120 38 123 67V103C123 129 108 143 90 143C72 143 57 129 57 104Z\" fill=\"url(#ds-guest-skin)\" stroke=\"#AD754F\" stroke-width=\"2\"/>\n  <path d=\"M68 85C72 81 79 81 84 83M99 83C104 80 110 82 114 85\" stroke=\"#3D302A\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n  <path d=\"M71 96C74 92 79 92 82 96M100 96C103 92 108 92 111 96\" stroke=\"#382D27\" stroke-width=\"3.5\" stroke-linecap=\"round\"/>\n  <path d=\"M90 96L87 111H93\" stroke=\"#AC6A48\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  <path d=\"M58 108C62 121 73 134 90 135C108 135 119 120 123 108V118C114 142 103 146 90 146C77 146 65 140 57 119Z\" fill=\"#493A2F\"/>\n  <path d=\"M75 120C81 117 84 119 90 120C97 118 101 117 106 120\" stroke=\"#493A2F\" stroke-width=\"3.5\" stroke-linecap=\"round\"/>\n  <path d=\"M80 123C85 129 96 130 102 123\" fill=\"#FFF3D9\"/>\n  <path d=\"M49 67C51 26 126 18 133 66C109 58 72 55 49 67Z\" fill=\"#FFFCED\" stroke=\"#D7D8C1\" stroke-width=\"2\"/>\n  <path d=\"M52 59C69 46 111 46 130 58\" stroke=\"#374B42\" stroke-width=\"8\" stroke-linecap=\"round\"/>\n  <path d=\"M52 68C68 56 111 56 129 67\" stroke=\"#263B35\" stroke-width=\"7\" stroke-linecap=\"round\"/>\n  <path d=\"M69 145L89 158L80 175L65 153M111 145L90 158L100 175L115 153\" fill=\"#FFFCEC\" stroke=\"#D7D2B9\" stroke-width=\"2\"/>\n  <path d=\"M90 161V199\" stroke=\"#BDBCA7\" stroke-width=\"2\"/><circle cx=\"94\" cy=\"180\" r=\"2\" fill=\"#ACAE96\"/>\n</svg><span class=\"ds-patience\" aria-hidden=\"true\"><span></span></span><kbd class=\"ds-order-key\">1</kbd></button>",
+      "css": ".ds-customer{position:relative;display:flex;flex-direction:column;align-items:center;width:134px;min-width:0;padding:0;border:0;border-radius:12px;background:transparent;color:var(--ink,#234e44);font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif;cursor:pointer} .ds-order-bubble{position:relative;display:flex;align-items:center;gap:0;width:125px;height:51px;padding:2px 8px 5px 2px;border:2px solid transparent;border-radius:13px;background:#fff9e9;box-shadow:0 3px 6px #6d4a211a;transform:translateY(3px);transition:transform 220ms var(--ease,cubic-bezier(.16,1,.3,1)),border-color 160ms} .ds-order-bubble:after{content:\"\";position:absolute;width:10px;height:10px;background:inherit;bottom:-5px;left:54px;transform:rotate(45deg)} .ds-order-food{width:54px;height:48px;flex-shrink:0} .ds-order-bubble>span{font-size:13px;line-height:1.1;font-weight:850} .ds-customer[aria-pressed=true] .ds-order-bubble{border-color:#b57528;transform:translateY(-2px);background:#fff5d5} .ds-customer[aria-pressed=true] .ds-order-bubble:after{border-right:2px solid #b57528;border-bottom:2px solid #b57528;bottom:-7px} .ds-customer-portrait{width:116px;height:115px;display:block;object-fit:cover;object-position:top} .ds-patience{position:absolute;bottom:4px;width:74px;height:6px;border-radius:6px;background:#eee0c6;overflow:hidden} .ds-patience>span{display:block;height:100%;width:100%;background:#36715c;transform:scaleX(.8);transform-origin:left} .ds-order-key{position:absolute;right:9px;bottom:13px;color:var(--quiet,#705945);background:#fff5dc;border-radius:4px;padding:2px 4px;font-size:11px} .ds-customer:focus-visible{outline:3px solid #217963;outline-offset:4px} @media(hover:hover){.ds-customer:hover .ds-order-bubble{transform:translateY(-4px)}} @media(prefers-reduced-motion:reduce){.ds-order-bubble{transition:none}}"
+    },
+    {
+      "name": "Serving worktop",
+      "kind": "card",
+      "refersTo": "worktop",
+      "description": "The cream counter, stitched coral trim, recipe heading, and completed dish.",
+      "html": "<section class=\"ds-worktop\" aria-label=\"Cooking counter\"><span class=\"ds-counter-trim\" aria-hidden=\"true\"></span><header class=\"ds-recipe-heading\"><div><h1>Karak</h1><span lang=\"ar\" dir=\"rtl\">كرك</span></div><span class=\"ds-step-count\">Ready to serve</span></header><div class=\"ds-serve-station\"><svg class=\"ds-ready-dish\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 200\" fill=\"none\">\n  <defs>\n    <linearGradient id=\"ds-ready-cup\" x1=\"68\" y1=\"80\" x2=\"167\" y2=\"164\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FFF8DC\"/><stop offset=\".5\" stop-color=\"#F5E4BB\"/><stop offset=\"1\" stop-color=\"#D7B67C\"/></linearGradient>\n    <linearGradient id=\"ds-ready-tea\" x1=\"113\" y1=\"56\" x2=\"135\" y2=\"93\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#8F431B\"/><stop offset=\".48\" stop-color=\"#BD7137\"/><stop offset=\"1\" stop-color=\"#E0A85F\"/></linearGradient>\n    <linearGradient id=\"ds-ready-rim\" x1=\"110\" y1=\"143\" x2=\"118\" y2=\"183\" gradientUnits=\"userSpaceOnUse\"><stop stop-color=\"#FDF1D0\"/><stop offset=\"1\" stop-color=\"#D6B582\"/></linearGradient>\n  </defs>\n  <ellipse cx=\"121\" cy=\"178\" rx=\"91\" ry=\"13\" fill=\"#5B3726\" opacity=\".15\"/>\n  <ellipse cx=\"119\" cy=\"162\" rx=\"97\" ry=\"25\" fill=\"url(#ds-ready-rim)\"/>\n  <ellipse cx=\"119\" cy=\"157\" rx=\"96\" ry=\"22\" fill=\"#FFFAE9\" stroke=\"#ECD5AA\" stroke-width=\"3\"/>\n  <ellipse cx=\"119\" cy=\"158\" rx=\"76\" ry=\"16\" stroke=\"#75AAA2\" stroke-width=\"2\"/>\n  <path d=\"M177 86C223 73 222 126 176 132\" stroke=\"#C5A36C\" stroke-width=\"18\" stroke-linecap=\"round\"/>\n  <path d=\"M178 85C217 76 216 122 178 125\" stroke=\"#FFF0CB\" stroke-width=\"11\" stroke-linecap=\"round\"/>\n  <path d=\"M61 77L72 138C76 158 94 169 122 169C149 169 168 158 172 138L184 77H61Z\" fill=\"url(#ds-ready-cup)\" stroke=\"#CBB085\" stroke-width=\"2\"/>\n  <path d=\"M69 109C99 123 149 124 177 109L174 124C144 139 101 138 71 124Z\" fill=\"#C95F42\"/>\n  <path d=\"M82 120L89 115L96 121L89 125Z M111 124L118 119L125 125L118 129Z M140 122L147 117L154 122L147 127Z\" fill=\"#F5CF80\"/>\n  <path d=\"M79 91L85 105M88 136L91 145\" stroke=\"#FFFBE5\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\".85\"/>\n  <ellipse cx=\"122\" cy=\"77\" rx=\"62\" ry=\"25\" fill=\"#FDF4D8\" stroke=\"#CFAE76\" stroke-width=\"2\"/>\n  <ellipse cx=\"122\" cy=\"78\" rx=\"54\" ry=\"18\" fill=\"url(#ds-ready-tea)\"/>\n  <path d=\"M80 79C90 64 131 63 153 71\" stroke=\"#EBC28A\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n  <path d=\"M140 77C130 71 115 73 114 80C113 86 131 87 143 82C157 75 138 68 127 72\" stroke=\"#F3CE92\" stroke-width=\"2.5\" stroke-linecap=\"round\"/>\n  <ellipse cx=\"91\" cy=\"82\" rx=\"3\" ry=\"1.5\" fill=\"#FBE2B2\"/><ellipse cx=\"98\" cy=\"75\" rx=\"2\" ry=\"1.2\" fill=\"#FBE2B2\"/>\n  <path d=\"M97 47C84 35 110 28 101 13M124 45C113 30 139 28 130 9M150 47C142 37 158 31 153 22\" stroke=\"#FFF9E5\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\".72\"/>\n</svg><p>Freshly made. Make someone happy.</p><button class=\"ds-btn-serve\" type=\"button\">Serve karak<svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15m-6-6 6 6-6 6\"/></svg></button></div></section>",
+      "css": ".ds-worktop{position:relative;max-width:600px;min-height:384px;padding:24px 30px 22px;border-radius:18px 18px 24px 24px;background:#fff5e2;color:var(--ink,#234e44);box-shadow:0 13px 35px #67431c32;font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif} .ds-counter-trim{position:absolute;height:13px;left:-7px;right:-7px;top:-5px;border-radius:8px 8px 3px 3px;background:var(--trim,#cb664b);box-shadow:0 4px 6px #743b2220} .ds-counter-trim:after{content:\"\";position:absolute;inset:5px 12px auto;border-top:2px dashed #fbe5bb} .ds-recipe-heading{display:flex;align-items:center;justify-content:space-between;gap:16px} .ds-recipe-heading>div{display:flex;gap:12px;align-items:center} .ds-recipe-heading h1{margin:0;font-size:24px;font-weight:850;letter-spacing:-.02em} .ds-recipe-heading [lang=ar]{color:#8c694b;font-size:17px} .ds-step-count{font-size:13px;font-weight:700;color:#74604c;white-space:nowrap} .ds-serve-station{display:flex;flex-direction:column;align-items:center} .ds-ready-dish{width:270px;height:227px;max-width:100%} .ds-serve-station p{margin:0 0 14px;font-size:15px;font-weight:650;color:#73573b} @media(max-width:600px){.ds-worktop{padding:23px 16px 17px} .ds-recipe-heading h1{font-size:22px} .ds-recipe-heading [lang=ar]{font-size:15px}} .ds-btn-serve{display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:56px;padding:16px 26px;border:0;border-radius:16px;background:#286c58;color:#fff7e8;font-family:'Avenir Next','Trebuchet MS',system-ui,sans-serif;font-size:19px;font-weight:850;cursor:pointer;box-shadow:0 6px 15px #9433232b;transition:transform 160ms var(--ease,cubic-bezier(.16,1,.3,1)),background 160ms} .ds-btn-serve svg{flex-shrink:0} .ds-btn-serve:active{transform:translateY(2px) scale(.98)} .ds-btn-serve:focus-visible{outline:3px solid #217963;outline-offset:4px} .ds-btn-serve:disabled{cursor:default;opacity:.6} @media(hover:hover){.ds-btn-serve:hover:not(:disabled){background:#205843}} @media(prefers-reduced-motion:reduce){.ds-btn-serve{transition:none} .ds-btn-serve:active{transform:none}} .ds-btn-serve{width:100%;max-width:400px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Saffron Tray",
+    "overview": "A warm serving tray sits inside a sunlit Bahraini souq. Cream ceramic, painted teal wood, coral fabric, and brass accents frame generous food illustrations. The background supplies place and atmosphere; the food and the current action hold attention.\n\nThe interface is friendly and tactile, with rounded system lettering, short instructions, and controls that visibly press. Original local SVG dishes and fictional customers sit over one generated souq illustration. English action labels and Arabic recipe names carry the setting without requiring prior game knowledge.",
+    "keyCharacteristics": [
+      "Appetizing food silhouettes on warm, quiet surfaces.",
+      "One active recipe, one short instruction, and one large action.",
+      "Tactile buttons, clear selection, and visible changes to the food.",
+      "Brief celebrations supported by score, stars, and remembered progress."
+    ],
+    "rules": [
+      {
+        "name": "The Food Contrast Rule",
+        "body": "Keep the cooking area quiet and pale so ingredient changes, the pouring line, and the selected order remain readable against the illustrated souq.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Instruction Rule",
+        "body": "Keep the active instruction to one short sentence. The action button states the action or its immediate feedback: “Hold to pour,” “Release!,” or “Lovely!”",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do preserve the Bahraini food, Arabic recipe labels, and original souq artwork.",
+      "Do keep food changes visible beneath a single clear instruction.",
+      "Do pair status colors with text, position, or a check mark.",
+      "Do retain keyboard, touch, mute, pause, and reduced-motion behavior.",
+      "Do use the existing system font stack and local artwork."
+    ],
+    "donts": [
+      "Don't make hover or sound the only way to understand an action.",
+      "Don't add decorative overlays that obscure the food or pouring line.",
+      "Don't shrink interactive targets below the established 44px minimum.",
+      "Don't replace the illustrated cooking world with a business ledger or dense dashboard."
+    ]
+  }
+}
