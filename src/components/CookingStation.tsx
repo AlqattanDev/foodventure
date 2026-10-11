@@ -63,7 +63,7 @@ function PourArt({ fill, active, id }: { fill: number; active: boolean; id: stri
     <g clipPath={`url(#${id}-inside)`}>
       <rect x="107" y={level} width="103" height="130" fill={`url(#${id}-tea)`} />
       <ellipse cx="158" cy={level} rx="52" ry="8" fill="#F0BF77" />
-      <path d={`M131 ${level + 1}Q149 ${level - 5}175 ${level + 1}`} fill="none" stroke="#FFE2A8" strokeWidth="2.5" opacity={fill > .06 ? .8 : 0} />
+      <path d={`M131 ${level + 1}Q149 ${level - 5} 175 ${level + 1}`} fill="none" stroke="#FFE2A8" strokeWidth="2.5" opacity={fill > .06 ? .8 : 0} />
       <rect x="106" y="99" width="106" height="20" fill="#EFC15C" opacity=".18" />
       <path d="M111 109H203" fill="none" stroke="#C18D2A" strokeWidth="3" strokeDasharray="5 4" />
       <path d="M119 81L129 160" fill="none" stroke="#FFFBE7" strokeWidth="5" opacity=".5" strokeLinecap="round" />
