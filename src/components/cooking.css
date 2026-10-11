@@ -1,0 +1,299 @@
+.cook-station {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+  color: #284d3d;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.cook-surface {
+  display: block;
+  width: 100%;
+  height: clamp(188px, 27vh, 230px);
+  min-height: 160px;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  outline-offset: -4px;
+}
+
+.cook-surface:focus-visible,
+.cook-action:focus-visible {
+  outline: 3px solid #215e50;
+  outline-offset: 4px;
+}
+
+.cook-surface:focus-visible { outline-offset: -4px; }
+
+.cook-surface:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.cook-illustration {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.cook-hint {
+  position: relative;
+  min-height: 21px;
+  margin: 3px 0 10px;
+  color: #4b6550;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+  text-align: center;
+  transition: color 140ms ease;
+}
+
+.cook-hint-ready {
+  color: #765214;
+  font-weight: 800;
+}
+
+.cook-action {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 22px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: #225846;
+  color: #fff9e9;
+  box-shadow: 0 5px 12px rgb(49 82 49 / 17%);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 130ms cubic-bezier(.16, 1, .3, 1), background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.cook-action-progress {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: rgb(212 236 170 / 17%);
+  pointer-events: none;
+}
+
+.cook-action-label,
+.cook-action-icon {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cook-action-icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cook-action:active,
+.cook-is-active .cook-action {
+  transform: translateY(2px) scale(.985);
+  background: #1b4c3c;
+  box-shadow: 0 2px 6px rgb(49 82 49 / 12%);
+}
+
+.cook-action:disabled {
+  cursor: default;
+}
+
+.cook-is-done .cook-action {
+  background: #e9be64;
+  color: #3e491f;
+  opacity: 1;
+  transform: none;
+}
+
+.cook-station:not(.cook-is-done) .cook-action:disabled {
+  background: #627b60;
+  box-shadow: none;
+}
+
+.cook-kettle {
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.cook-pour-stream {
+  transition: opacity 90ms ease;
+}
+
+.cook-gold-arrow-ready {
+  fill: #235e44;
+}
+
+.cook-steam {
+  fill: none;
+  stroke: #fffcdf;
+  stroke-width: 4;
+  stroke-linecap: round;
+  opacity: .72;
+  animation: cook-steam-rise 2s ease-in-out infinite;
+}
+
+.cook-steam-b { animation-delay: -.65s; }
+.cook-steam-c { animation-delay: -1.3s; }
+
+.cook-circle-cue {
+  animation: cook-circle-hint 1.8s ease-in-out infinite;
+  transform-origin: 160px 116px;
+}
+
+.cook-pastry-fold {
+  transition: transform 90ms ease-out;
+}
+
+.cook-is-done .cook-pastry-fold {
+  transition-duration: 250ms;
+  transition-timing-function: cubic-bezier(.16, 1, .3, 1);
+}
+
+.cook-fold-cue {
+  animation: cook-fold-hint 1.5s ease-in-out infinite;
+}
+
+.cook-fried-pastry {
+  transition: fill 240ms ease;
+}
+
+.cook-garnish {
+  transform: translate(69px, -33px) rotate(-11deg) scale(.9);
+  transform-origin: 160px 106px;
+}
+
+.cook-garnish-done {
+  animation: cook-drop-garnish 330ms cubic-bezier(.25, .7, .3, 1) both;
+}
+
+.cook-food-pop {
+  transform-origin: 160px 143px;
+  animation: cook-food-pop 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.cook-sizzle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cook-sizzle 300ms ease-out infinite;
+}
+
+.cook-sizzle-1 { animation-delay: -110ms; }
+.cook-sizzle-2 { animation-delay: -210ms; }
+
+.cook-sparks {
+  position: absolute;
+  top: 41%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.cook-sparks span {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: #e5b052;
+  opacity: 0;
+  animation: cook-spark 420ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.cook-sparks span:nth-child(2n) { background: #8caa64; border-radius: 50%; }
+.cook-sparks span:nth-child(3n) { width: 5px; height: 10px; background: #cf7853; }
+
+@media (hover: hover) {
+  .cook-action:hover:not(:disabled) { background: #2f6953; box-shadow: 0 7px 15px rgb(49 82 49 / 20%); }
+  .cook-surface:hover:not(:disabled) .cook-gold-arrow { fill: #996d1b; }
+}
+
+@media (max-height: 740px) {
+  .cook-surface { height: 184px; min-height: 154px; }
+  .cook-hint { margin-bottom: 7px; }
+  .cook-action { min-height: 52px; padding-block: 12px; }
+}
+
+@media (max-width: 360px) {
+  .cook-hint { font-size: 13px; }
+  .cook-action { font-size: 16px; }
+}
+
+@keyframes cook-steam-rise {
+  0%, 100% { transform: translateY(2px); opacity: .35; }
+  50% { transform: translateY(-7px); opacity: .78; }
+}
+
+@keyframes cook-circle-hint {
+  0%, 100% { transform: rotate(-8deg); opacity: .75; }
+  65% { transform: rotate(18deg); opacity: 1; }
+}
+
+@keyframes cook-fold-hint {
+  0%, 100% { transform: translateY(5px); opacity: .65; }
+  65% { transform: translateY(-3px); opacity: 1; }
+}
+
+@keyframes cook-drop-garnish {
+  0% { transform: translate(69px, -33px) rotate(-11deg) scale(.9); }
+  62% { transform: translate(0, 6px) rotate(3deg) scale(1.04, .94); }
+  100% { transform: translate(0, 0) rotate(0) scale(1); }
+}
+
+@keyframes cook-food-pop {
+  0%, 100% { transform: scale(1); }
+  55% { transform: scale(1.04, .96); }
+}
+
+@keyframes cook-sizzle {
+  0% { transform: scale(.5); opacity: 1; }
+  100% { transform: translateY(-7px) scale(1.8); opacity: 0; }
+}
+
+@keyframes cook-spark {
+  0% { transform: translate(-4px, -4px) scale(.3); opacity: 1; }
+  65% { opacity: .95; }
+  100% { transform: translate(var(--cook-x), var(--cook-y)) rotate(var(--cook-rotation)) scale(.65); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cook-station *,
+  .cook-station *::before,
+  .cook-station *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .cook-steam { opacity: .5; }
+  .cook-garnish-done { transform: none; }
+  .cook-is-active .cook-action,
+  .cook-action:active { transform: none; }
+  .cook-sparks { display: none; }
+}

@@ -1,39 +1,22 @@
 {
-  "name": "foodventure-khaliji",
+  "name": "foodventure",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "exidex": "npm run build && rsync -a --delete --exclude card.json --exclude thumb.png dist/ .exidex/",
-    "cap:sync": "npm run build && cap sync",
-    "ios": "npm run build && cap sync ios && cap open ios",
-    "android": "npm run build && cap sync android && cap open android"
+    "exidex": "npm run build && rsync -a --delete --exclude card.json --exclude thumb.png --exclude shots/ --exclude content.md dist/ .exidex/"
   },
   "dependencies": {
-    "@capacitor/android": "^6.2.1",
-    "@capacitor/app": "^6.0.3",
-    "@capacitor/core": "^6.2.1",
-    "@capacitor/haptics": "^6.0.3",
-    "@capacitor/ios": "^6.2.1",
-    "@capacitor/status-bar": "^6.0.3",
-    "@react-three/drei": "^9.114.3",
-    "@react-three/fiber": "^8.17.10",
-    "@react-three/postprocessing": "^2.16.3",
-    "framer-motion": "^11.18.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "three": "^0.169.0",
-    "zustand": "^4.5.5"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.2.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@types/three": "^0.169.0",
     "@vitejs/plugin-react": "^4.3.3",
     "typescript": "^5.6.3",
     "vite": "^5.4.10",

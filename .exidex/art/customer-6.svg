@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 200" fill="none">
+  <defs><linearGradient id="skin" x1="67" y1="63" x2="114" y2="139" gradientUnits="userSpaceOnUse"><stop stop-color="#EBC29A"/><stop offset="1" stop-color="#CF9A70"/></linearGradient><linearGradient id="shirt" x1="61" y1="145" x2="131" y2="206" gradientUnits="userSpaceOnUse"><stop stop-color="#D89B52"/><stop offset="1" stop-color="#B36D3B"/></linearGradient></defs>
+  <path d="M49 80C37 113 43 144 36 160C44 174 60 180 76 177L119 177C137 175 146 164 144 152C133 133 143 111 133 84Z" fill="#3D382E"/>
+  <path d="M18 200L26 174C31 155 52 145 73 140H109C129 145 147 156 154 174L162 200Z" fill="url(#shirt)" stroke="#A56335" stroke-width="2"/>
+  <path d="M74 124H106V151C101 165 79 165 74 151Z" fill="url(#skin)"/>
+  <ellipse cx="57" cy="100" rx="9" ry="13" fill="#DAA87C"/><ellipse cx="123" cy="100" rx="9" ry="13" fill="#DAA87C"/>
+  <path d="M57 66C62 41 117 43 124 67L123 104C120 128 107 142 90 143C74 141 59 128 57 107Z" fill="url(#skin)" stroke="#B7845E" stroke-width="2"/>
+  <path d="M54 89C41 74 43 51 53 45C57 30 72 24 86 28C104 19 122 33 125 44C143 51 143 72 130 89L123 69C108 70 91 60 86 50C80 65 66 72 56 71Z" fill="#454033"/>
+  <path d="M56 55C64 41 75 44 79 38M97 36C105 35 116 46 118 55M48 115C48 128 55 137 53 149M130 116C137 132 126 145 134 154" stroke="#625641" stroke-width="4" stroke-linecap="round"/>
+  <path d="M64 84C70 81 78 81 83 84M98 84C105 80 112 82 117 84" stroke="#514332" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="75" cy="97" rx="3" ry="4" fill="#3F3327"/><ellipse cx="107" cy="97" rx="3" ry="4" fill="#3F3327"/>
+  <circle cx="75" cy="97" r="14" stroke="#916833" stroke-width="3"/><circle cx="107" cy="97" r="14" stroke="#916833" stroke-width="3"/>
+  <path d="M89 96H93M60 93L54 91M121 93L126 91" stroke="#916833" stroke-width="3"/>
+  <path d="M91 99L87 112L93 113" stroke="#B47A54" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M80 122C85 127 97 127 102 120" stroke="#A15E48" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="57" cy="115" r="4" fill="#F0CB73"/><circle cx="124" cy="115" r="4" fill="#F0CB73"/>
+  <path d="M66 147C72 163 107 169 117 147" stroke="#EEC280" stroke-width="4" stroke-linecap="round"/>
+  <path d="M49 172L44 200M131 173L137 200" stroke="#BA7B44" stroke-width="2"/>
+</svg>

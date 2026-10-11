@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 200" fill="none">
+  <defs><linearGradient id="skin" x1="66" y1="57" x2="120" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#AA7554"/><stop offset="1" stop-color="#81523B"/></linearGradient><linearGradient id="shirt" x1="42" y1="155" x2="127" y2="203" gradientUnits="userSpaceOnUse"><stop stop-color="#ECB65C"/><stop offset="1" stop-color="#C98838"/></linearGradient></defs>
+  <path d="M19 200L23 175C29 151 50 143 69 138H112C132 143 152 153 157 175L162 200Z" fill="url(#shirt)" stroke="#B57932" stroke-width="2"/>
+  <path d="M75 123H107V152C103 164 79 164 75 152Z" fill="url(#skin)"/>
+  <ellipse cx="55" cy="95" rx="10" ry="14" fill="#986346"/><ellipse cx="126" cy="96" rx="10" ry="14" fill="#986346"/>
+  <path d="M55 61C59 33 123 34 128 62L125 105C124 130 108 143 90 143C71 143 57 129 56 107Z" fill="url(#skin)" stroke="#75472F" stroke-width="2"/>
+  <path d="M55 84C47 66 48 41 61 35C68 20 89 22 96 27C112 21 130 31 132 45C143 58 133 73 126 84L124 60C116 60 106 55 101 50C87 63 69 65 57 61Z" fill="#39362C"/>
+  <path d="M61 44C77 31 87 44 99 34M107 38L120 47" stroke="#575040" stroke-width="4" stroke-linecap="round"/>
+  <path d="M64 83C71 79 80 79 85 82M101 82C107 78 116 80 121 84" stroke="#3B322A" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="76" cy="96" rx="3.5" ry="4.5" fill="#2F2B24"/><ellipse cx="110" cy="96" rx="3.5" ry="4.5" fill="#2F2B24"/>
+  <circle cx="77" cy="94" r="1" fill="#F5DEC0"/><circle cx="111" cy="94" r="1" fill="#F5DEC0"/>
+  <path d="M93 94L88 111C90 114 95 114 99 111" stroke="#704630" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M76 120C84 126 101 126 109 118C108 137 81 138 76 120Z" fill="#633829"/>
+  <path d="M78 121C86 125 100 125 107 120L104 127C96 130 86 129 80 126Z" fill="#FFF2D9"/>
+  <path d="M73 143L90 157L76 176L61 150M109 143L91 157L105 176L120 150" fill="#F5C76F" stroke="#BE883D" stroke-width="2"/>
+  <path d="M91 159V200M51 172L48 200M135 172L140 200" stroke="#C38B3C" stroke-width="2"/>
+  <circle cx="95" cy="184" r="2" fill="#A57334"/>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <defs>
+    <linearGradient id="egg" x1="117" y1="61" x2="153" y2="124" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF2AB"/><stop offset=".42" stop-color="#FFD963"/><stop offset="1" stop-color="#EFAE29"/></linearGradient>
+    <linearGradient id="noodles" x1="112" y1="98" x2="129" y2="158" gradientUnits="userSpaceOnUse"><stop stop-color="#EBC16B"/><stop offset="1" stop-color="#B87227"/></linearGradient>
+  </defs>
+  <ellipse cx="120" cy="181" rx="98" ry="11" fill="#5B3726" opacity=".15"/>
+  <ellipse cx="120" cy="154" rx="106" ry="31" fill="#D5B787"/>
+  <ellipse cx="120" cy="148" rx="107" ry="34" fill="#FFF6DF" stroke="#E9CEA1" stroke-width="2"/>
+  <ellipse cx="120" cy="147" rx="93" ry="26" stroke="#71A99C" stroke-width="2"/>
+  <path d="M36 138C34 121 47 106 67 101C89 83 113 90 128 87C148 86 164 91 174 105C194 109 210 123 205 141C196 161 148 168 119 165C83 170 39 157 36 138Z" fill="url(#noodles)"/>
+  <g stroke="#EDC276" stroke-width="4" stroke-linecap="round"><path d="M47 135C70 112 84 137 99 118C108 108 114 99 128 111C141 127 160 100 183 124"/><path d="M48 146C69 152 69 126 94 135C113 144 118 120 139 132C154 144 175 123 195 140"/><path d="M57 117C79 113 75 143 98 147C120 151 121 131 139 149C156 164 163 131 190 145"/><path d="M62 152C78 135 89 163 111 143C128 128 152 161 170 151"/><path d="M66 109C96 97 83 125 116 119C132 116 149 106 164 118C177 130 183 124 194 130"/><path d="M49 130C68 140 80 117 96 125C111 134 122 108 144 117C160 125 166 140 183 130"/></g>
+  <g stroke="#FADD97" stroke-width="2.5" stroke-linecap="round"><path d="M44 141C71 123 70 149 97 137"/><path d="M61 155C84 147 91 163 116 150"/><path d="M100 127C126 139 119 119 144 131C168 143 174 121 197 139"/><path d="M130 158C146 150 163 161 180 148"/><path d="M162 118C172 126 184 125 189 135"/></g>
+  <path d="M61 94C67 68 100 48 132 52C169 54 194 78 197 105C177 132 105 133 63 108C58 105 58 99 61 94Z" fill="#C98B2A"/>
+  <path d="M58 91C65 65 100 45 132 48C170 51 194 75 198 101C178 124 107 130 65 104C59 101 55 96 58 91Z" fill="url(#egg)" stroke="#D99C2C" stroke-width="2"/>
+  <path d="M63 93C101 85 165 89 195 103C170 130 96 126 63 101Z" fill="#F6C749"/>
+  <path d="M68 88C82 63 103 57 122 57" stroke="#FFF0AC" stroke-width="4" stroke-linecap="round"/>
+  <path d="M70 95C105 90 163 95 189 104" stroke="#FFE89C" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#D39A2D" opacity=".7"><ellipse cx="95" cy="74" rx="5" ry="3"/><ellipse cx="137" cy="74" rx="6" ry="3" transform="rotate(16 137 74)"/><ellipse cx="165" cy="86" rx="4" ry="2"/><ellipse cx="117" cy="100" rx="3" ry="1.5"/><ellipse cx="147" cy="107" rx="4" ry="2"/></g>
+  <path d="M119 67L125 62M134 91L138 84M89 107L94 101" stroke="#C97E2B" stroke-width="2" stroke-linecap="round"/>
+  <path d="M183 156C184 144 196 143 204 149C201 160 193 163 183 156Z" fill="#5A9257"/>
+</svg>

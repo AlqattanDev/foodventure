@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 200" fill="none">
+  <defs><linearGradient id="skin" x1="61" y1="70" x2="119" y2="137" gradientUnits="userSpaceOnUse"><stop stop-color="#DBAA77"/><stop offset="1" stop-color="#BB875A"/></linearGradient><linearGradient id="cloth" x1="62" y1="140" x2="129" y2="202" gradientUnits="userSpaceOnUse"><stop stop-color="#EFE8CF"/><stop offset="1" stop-color="#C7C6AD"/></linearGradient></defs>
+  <path d="M19 200L24 172C29 151 53 141 73 138H111C131 144 149 155 155 172L162 200Z" fill="url(#cloth)" stroke="#BDBBA0" stroke-width="2"/>
+  <path d="M76 125H107V153C102 164 80 164 76 153Z" fill="url(#skin)"/>
+  <ellipse cx="56" cy="99" rx="10" ry="14" fill="#C69165"/><ellipse cx="126" cy="99" rx="10" ry="14" fill="#C69165"/>
+  <path d="M55 66C61 43 122 44 128 67L126 108C124 132 109 146 90 147C72 146 56 131 55 108Z" fill="url(#skin)" stroke="#AC7A50" stroke-width="2"/>
+  <path d="M54 92L50 71L58 60L63 68L59 92M121 68L130 63L133 77L127 96" fill="#E4DEC9"/>
+  <path d="M48 63C52 41 67 32 90 32C114 32 131 45 134 63L129 74C107 70 72 70 51 74Z" fill="#FFFAE8" stroke="#D5D0B9" stroke-width="2"/>
+  <path d="M54 61C75 55 110 55 128 62" stroke="#DDD7BF" stroke-width="2" stroke-dasharray="4 5"/>
+  <path d="M63 86C69 81 79 81 85 83M100 83C107 80 117 82 121 86" stroke="#746C57" stroke-width="4" stroke-linecap="round"/>
+  <path d="M69 98C74 93 80 93 84 97M101 97C106 93 113 93 117 98" stroke="#443C2C" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M91 97L86 111L94 113M60 106L65 109M120 107L125 104" stroke="#AC774F" stroke-width="2" stroke-linecap="round"/>
+  <path d="M56 111C62 126 75 132 90 132C107 132 119 124 125 110L124 128C117 147 105 157 90 157C75 157 63 147 57 129Z" fill="#DBD6BF"/>
+  <path d="M77 119C81 116 86 117 91 119C97 116 103 117 108 119" stroke="#DAD3B9" stroke-width="5" stroke-linecap="round"/>
+  <path d="M80 126C85 131 97 131 103 124" stroke="#825440" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M69 134L73 140M91 142V150M110 135L106 141" stroke="#BFBEA8" stroke-width="2" stroke-linecap="round"/>
+  <path d="M76 150L90 163L79 177L66 156M107 150L91 163L102 177L117 155" fill="#F9F3DF" stroke="#C6C3AB" stroke-width="2"/>
+  <path d="M91 164V200" stroke="#B7B59E" stroke-width="2"/>
+</svg>
